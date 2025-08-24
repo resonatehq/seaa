@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" viewBox="-186.5 -1493.448 791 401.896" width="791" height="401.896">
+  <defs>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="#353f58">
+      <g>
+        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+  </defs>
+  <g id="Canvas_1" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill-opacity="1" fill="none">
+    <title>Canvas 1</title>
+    <rect fill="white" x="-186.5" y="-1493.448" width="791" height="401.896"/>
+    <g id="Canvas_1_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_636">
+        <path d="M 104 -1440 L 314 -1440 C 319.52285 -1440 324 -1435.5228 324 -1430 L 324 -1135 C 324 -1129.4772 319.52285 -1125 314 -1125 L 104 -1125 C 98.47715 -1125 94 -1129.4772 94 -1135 L 94 -1430 C 94 -1435.5228 98.47715 -1440 104 -1440 Z" fill="#f5f5ff"/>
+        <path d="M 104 -1440 L 314 -1440 C 319.52285 -1440 324 -1435.5228 324 -1430 L 324 -1135 C 324 -1129.4772 319.52285 -1125 314 -1125 L 104 -1125 C 98.47715 -1125 94 -1129.4772 94 -1135 L 94 -1430 C 94 -1435.5228 98.47715 -1440 104 -1440 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4.0,4.0" stroke-width="1"/>
+      </g>
+      <g id="Graphic_634">
+        <rect x="119" y="-1415" width="180" height="120" fill="white"/>
+        <rect x="119" y="-1415" width="180" height="120" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(124 -1373.448)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="57.888" y="15" xml:space="preserve">Agentic</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="44.848" y="33.448" xml:space="preserve">Application</tspan>
+        </text>
+      </g>
+      <g id="Graphic_632">
+        <circle cx="44" cy="-1355" r="25.0000399475474" fill="white"/>
+        <circle cx="44" cy="-1355" r="25.0000399475474" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_631">
+        <rect x="-186" y="-1415" width="180" height="120" fill="white"/>
+        <rect x="-186" y="-1415" width="180" height="120" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(-181 -1364.224)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="68.264" y="15" xml:space="preserve">User</tspan>
+        </text>
+      </g>
+      <g id="Graphic_630">
+        <circle cx="374" cy="-1355" r="25.0000399475475" fill="white"/>
+        <circle cx="374" cy="-1355" r="25.0000399475475" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_629">
+        <rect x="424" y="-1415" width="180" height="120" fill="white"/>
+        <rect x="424" y="-1415" width="180" height="120" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(429 -1364.224)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="40.24" y="15" xml:space="preserve">Environment</tspan>
+        </text>
+      </g>
+      <g id="Graphic_628">
+        <path d="M 128 -1270 L 290 -1270 C 294.97056 -1270 299 -1265.9706 299 -1261 L 299 -1159 C 299 -1154.0294 294.97056 -1150 290 -1150 L 128 -1150 C 123.02944 -1150 119 -1154.0294 119 -1159 L 119 -1261 C 119 -1265.9706 123.02944 -1270 128 -1270 Z" fill="white"/>
+        <path d="M 128 -1270 L 290 -1270 C 294.97056 -1270 299 -1265.9706 299 -1261 L 299 -1159 C 299 -1154.0294 294.97056 -1150 290 -1150 L 128 -1150 C 123.02944 -1150 119 -1154.0294 119 -1159 L 119 -1261 C 119 -1265.9706 123.02944 -1270 128 -1270 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(124 -1219.224)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="55.656" y="15" xml:space="preserve">Memory</tspan>
+        </text>
+      </g>
+      <g id="Line_627">
+        <line x1="-6" y1="-1355" x2="18.999988" y2="-1355" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_626">
+        <line x1="69.00001" y1="-1355" x2="119" y2="-1355" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_625">
+        <line x1="299" y1="-1355" x2="349" y2="-1355" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_624">
+        <line x1="399" y1="-1355" x2="424" y2="-1355" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_623">
+        <line x1="209" y1="-1270" x2="209" y2="-1295" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_638">
+        <text transform="translate(99 -1115)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="46.28" y="15" xml:space="preserve">System Boundary</tspan>
+        </text>
+      </g>
+      <g id="Graphic_640">
+        <text transform="translate(169.504 -1488.448)" fill="black">
+          <tspan font-family="Helvetica Neue" font-weight="bold" font-size="16" fill="black" x="34816594e-20" y="16" xml:space="preserve">This Book</tspan>
+        </text>
+      </g>
+      <g id="Line_641">
+        <line x1="207.72" y1="-1463.9839" x2="207.81933" y2="-1449.8998" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" viewBox="4419.5 -1940.5 401 861" width="401" height="861">
+  <defs>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="#353f58">
+      <g>
+        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+  </defs>
+  <g id="Canvas_1" fill-opacity="1" stroke="none" stroke-dasharray="none" fill="none" stroke-opacity="1">
+    <title>Canvas 1</title>
+    <rect fill="white" x="4419.5" y="-1940.5" width="401" height="861"/>
+    <g id="Canvas_1_Layer_1">
+      <title>Layer 1</title>
+      <g id="Group_369">
+        <g id="Graphic_344">
+          <rect x="4540" y="-1830" width="160" height="60" fill="white"/>
+          <rect x="4540" y="-1830" width="160" height="60" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(4545 -1814.336)" fill="black">
+            <tspan font-family="Helvetica Neue" font-size="12" fill="black" x="53.772" y="11" xml:space="preserve">Train on</tspan>
+            <tspan font-family="Helvetica Neue" font-size="12" fill="black" x="17.88" y="25.336" xml:space="preserve">general purpose data</tspan>
+          </text>
+        </g>
+        <g id="Graphic_345">
+          <path d="M 4549 -1720 L 4691 -1720 C 4695.9706 -1720 4700 -1715.9706 4700 -1711 L 4700 -1669 C 4700 -1664.0294 4695.9706 -1660 4691 -1660 L 4549 -1660 C 4544.0294 -1660 4540 -1664.0294 4540 -1669 L 4540 -1711 C 4540 -1715.9706 4544.0294 -1720 4549 -1720 Z" fill="white"/>
+          <path d="M 4549 -1720 L 4691 -1720 C 4695.9706 -1720 4700 -1715.9706 4700 -1711 L 4700 -1669 C 4700 -1664.0294 4695.9706 -1660 4691 -1660 L 4549 -1660 C 4544.0294 -1660 4540 -1664.0294 4540 -1669 L 4540 -1711 C 4540 -1715.9706 4544.0294 -1720 4549 -1720 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(4545 -1699.224)" fill="black">
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="32.328" y="15" xml:space="preserve">Base Model</tspan>
+          </text>
+        </g>
+        <g id="Graphic_346">
+          <rect x="4420" y="-1610" width="160" height="60" fill="white"/>
+          <rect x="4420" y="-1610" width="160" height="60" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(4425 -1594.336)" fill="black">
+            <tspan font-family="Helvetica Neue" font-size="12" fill="black" x="41.1" y="11" xml:space="preserve">Fine-tune on</tspan>
+            <tspan font-family="Helvetica Neue" font-size="12" fill="black" x="33.546" y="25.336" xml:space="preserve">approved loans</tspan>
+          </text>
+        </g>
+        <g id="Graphic_347">
+          <rect x="4660" y="-1610" width="160" height="60" fill="white"/>
+          <rect x="4660" y="-1610" width="160" height="60" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(4665 -1594.336)" fill="black">
+            <tspan font-family="Helvetica Neue" font-size="12" fill="black" x="41.1" y="11" xml:space="preserve">Fine-tune on</tspan>
+            <tspan font-family="Helvetica Neue" font-size="12" fill="black" x="37.44" y="25.336" xml:space="preserve">rejected loans</tspan>
+          </text>
+        </g>
+        <g id="Line_348">
+          <line x1="4620" y1="-1770" x2="4620" y2="-1729.9" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Line_349">
+          <path d="M 4620 -1660 L 4620 -1635 L 4500 -1635 L 4500 -1619.9" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Line_350">
+          <path d="M 4620 -1660 L 4620 -1635 L 4740 -1635 L 4740 -1619.9" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Graphic_351">
+          <path d="M 4549 -1940 L 4691 -1940 C 4695.9706 -1940 4700 -1935.9706 4700 -1931 L 4700 -1889 C 4700 -1884.0294 4695.9706 -1880 4691 -1880 L 4549 -1880 C 4544.0294 -1880 4540 -1884.0294 4540 -1889 L 4540 -1931 C 4540 -1935.9706 4544.0294 -1940 4549 -1940 Z" fill="white"/>
+          <path d="M 4549 -1940 L 4691 -1940 C 4695.9706 -1940 4700 -1935.9706 4700 -1931 L 4700 -1889 C 4700 -1884.0294 4695.9706 -1880 4691 -1880 L 4549 -1880 C 4544.0294 -1880 4540 -1884.0294 4540 -1889 L 4540 -1931 C 4540 -1935.9706 4544.0294 -1940 4549 -1940 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(4545 -1919.224)" fill="black">
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="22.696" y="15" xml:space="preserve">Scratch Model</tspan>
+          </text>
+        </g>
+        <g id="Line_352">
+          <line x1="4620" y1="-1880" x2="4620" y2="-1839.9" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Graphic_353">
+          <path d="M 4429 -1500 L 4571 -1500 C 4575.9706 -1500 4580 -1495.9706 4580 -1491 L 4580 -1449 C 4580 -1444.0294 4575.9706 -1440 4571 -1440 L 4429 -1440 C 4424.0294 -1440 4420 -1444.0294 4420 -1449 L 4420 -1491 C 4420 -1495.9706 4424.0294 -1500 4429 -1500 Z" fill="white"/>
+          <path d="M 4429 -1500 L 4571 -1500 C 4575.9706 -1500 4580 -1495.9706 4580 -1491 L 4580 -1449 C 4580 -1444.0294 4575.9706 -1440 4571 -1440 L 4429 -1440 C 4424.0294 -1440 4420 -1444.0294 4420 -1449 L 4420 -1491 C 4420 -1495.9706 4424.0294 -1500 4429 -1500 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(4425 -1488.448)" fill="black">
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="16.176" y="15" xml:space="preserve">Approval-biased</tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="52.624" y="33.448" xml:space="preserve">Model</tspan>
+          </text>
+        </g>
+        <g id="Line_354">
+          <line x1="4500" y1="-1550" x2="4500" y2="-1509.9" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Graphic_355">
+          <path d="M 4669 -1500 L 4811 -1500 C 4815.9706 -1500 4820 -1495.9706 4820 -1491 L 4820 -1449 C 4820 -1444.0294 4815.9706 -1440 4811 -1440 L 4669 -1440 C 4664.0294 -1440 4660 -1444.0294 4660 -1449 L 4660 -1491 C 4660 -1495.9706 4664.0294 -1500 4669 -1500 Z" fill="white"/>
+          <path d="M 4669 -1500 L 4811 -1500 C 4815.9706 -1500 4820 -1495.9706 4820 -1491 L 4820 -1449 C 4820 -1444.0294 4815.9706 -1440 4811 -1440 L 4669 -1440 C 4664.0294 -1440 4660 -1444.0294 4660 -1449 L 4660 -1491 C 4660 -1495.9706 4664.0294 -1500 4669 -1500 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(4665 -1488.448)" fill="black">
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="14.552" y="15" xml:space="preserve">Rejection-biased</tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="52.624" y="33.448" xml:space="preserve">Model</tspan>
+          </text>
+        </g>
+        <g id="Line_356">
+          <line x1="4740" y1="-1550" x2="4740" y2="-1509.9" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Graphic_358">
+          <path d="M 4429 -1280 L 4571 -1280 C 4575.9706 -1280 4580 -1275.9706 4580 -1271 L 4580 -1089 C 4580 -1084.0294 4575.9706 -1080 4571 -1080 L 4429 -1080 C 4424.0294 -1080 4420 -1084.0294 4420 -1089 L 4420 -1271 C 4420 -1275.9706 4424.0294 -1280 4429 -1280 Z" fill="white"/>
+          <path d="M 4429 -1280 L 4571 -1280 C 4575.9706 -1280 4580 -1275.9706 4580 -1271 L 4580 -1089 C 4580 -1084.0294 4575.9706 -1080 4571 -1080 L 4429 -1080 C 4424.0294 -1080 4420 -1084.0294 4420 -1089 L 4420 -1271 C 4420 -1275.9706 4424.0294 -1280 4429 -1280 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(4425 -1244.568)" fill="black">
+            <tspan font-family="Helvetica Neue" font-style="italic" font-size="16" fill="black" x="19.432" y="15" xml:space="preserve">While the credit </tspan>
+            <tspan font-family="Helvetica Neue" font-style="italic" font-size="16" fill="black" x="9.072" y="33.448" xml:space="preserve">score is moderate, </tspan>
+            <tspan font-family="Helvetica Neue" font-style="italic" font-size="16" fill="black" x="11.728" y="51.895996" xml:space="preserve">the stable income </tspan>
+            <tspan font-family="Helvetica Neue" font-style="italic" font-size="16" fill="black" x="26.256" y="70.34399" xml:space="preserve">demonstrates </tspan>
+            <tspan font-family="Helvetica Neue" font-style="italic" font-size="16" fill="black" x="16.616" y="88.79199" xml:space="preserve">reliable payment </tspan>
+            <tspan font-family="Helvetica Neue" font-style="italic" font-size="16" fill="black" x="9.216" y="107.23999" xml:space="preserve">capacity. Consider </tspan>
+            <tspan font-family="Helvetica Neue" font-style="italic" font-size="16" fill="black" x="42.248" y="125.68799" xml:space="preserve">approval.</tspan>
+          </text>
+        </g>
+        <g id="Graphic_359">
+          <path d="M 4669 -1280 L 4811 -1280 C 4815.9706 -1280 4820 -1275.9706 4820 -1271 L 4820 -1089 C 4820 -1084.0294 4815.9706 -1080 4811 -1080 L 4669 -1080 C 4664.0294 -1080 4660 -1084.0294 4660 -1089 L 4660 -1271 C 4660 -1275.9706 4664.0294 -1280 4669 -1280 Z" fill="white"/>
+          <path d="M 4669 -1280 L 4811 -1280 C 4815.9706 -1280 4820 -1275.9706 4820 -1271 L 4820 -1089 C 4820 -1084.0294 4815.9706 -1080 4811 -1080 L 4669 -1080 C 4664.0294 -1080 4660 -1084.0294 4660 -1089 L 4660 -1271 C 4660 -1275.9706 4664.0294 -1280 4669 -1280 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(4665 -1263.016)" fill="black">
+            <tspan font-family="Helvetica Neue" font-style="italic" font-size="16" fill="black" x="3.576" y="15" xml:space="preserve">The debt-to-income </tspan>
+            <tspan font-family="Helvetica Neue" font-style="italic" font-size="16" fill="black" x="26.552" y="33.448" xml:space="preserve">ratio presents </tspan>
+            <tspan font-family="Helvetica Neue" font-style="italic" font-size="16" fill="black" x="6.848" y="51.895996" xml:space="preserve">significant risk. The </tspan>
+            <tspan font-family="Helvetica Neue" font-style="italic" font-size="16" fill="black" x="16.928" y="70.34399" xml:space="preserve">credit score falls </tspan>
+            <tspan font-family="Helvetica Neue" font-style="italic" font-size="16" fill="black" x="39.592" y="88.79199" xml:space="preserve">below our </tspan>
+            <tspan font-family="Helvetica Neue" font-style="italic" font-size="16" fill="black" x="23.136" y="107.23999" xml:space="preserve">recommended </tspan>
+            <tspan font-family="Helvetica Neue" font-style="italic" font-size="16" fill="black" x="15.144" y="125.68799" xml:space="preserve">threshold for this </tspan>
+            <tspan font-family="Helvetica Neue" font-style="italic" font-size="16" fill="black" x="23.44" y="144.13599" xml:space="preserve">loan. Consider </tspan>
+            <tspan font-family="Helvetica Neue" font-style="italic" font-size="16" fill="black" x="51.584" y="162.58398" xml:space="preserve">denial.</tspan>
+          </text>
+        </g>
+        <g id="Line_360">
+          <line x1="4500" y1="-1440" x2="4500" y2="-1399.9" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Line_362">
+          <line x1="4740" y1="-1440" x2="4740" y2="-1399.9" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Line_364">
+          <line x1="4500" y1="-1330" x2="4500" y2="-1289.9" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Line_366">
+          <line x1="4740" y1="-1330" x2="4740" y2="-1289.9" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        </g>
+        <g id="Graphic_357">
+          <rect x="4420" y="-1390" width="400" height="60" fill="white"/>
+          <rect x="4420" y="-1390" width="400" height="60" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+          <text transform="translate(4425 -1367.168)" fill="black">
+            <tspan font-family="Helvetica Neue" font-size="12" fill="black" x="13.038" y="11" xml:space="preserve">Applicant has 650 credit score, $45k income, requesting $200k loan</tspan>
+          </text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

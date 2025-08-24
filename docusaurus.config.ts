@@ -4,7 +4,7 @@ import type * as Preset from "@docusaurus/preset-classic";
 const config: Config = {
   title: "Systems Eningeering for Agentic Applications",
   tagline: "",
-  favicon: "img/async-rpc-logo.png",
+  favicon: "img/logo.svg",
 
   // Set the production url of your site here
   url: "https://seaa.resonatehq.io",
@@ -92,7 +92,7 @@ const config: Config = {
       title: "Systems Engineering for Agentic Applications",
       logo: {
         alt: "SEAA logo",
-        src: "img/async-rpc-logo.png",
+        src: "img/logo.svg",
         href: "/",
         target: "_self",
       },

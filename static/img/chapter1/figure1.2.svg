@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" viewBox="-.5 -10.5 351 481" width="351" height="481">
+  <defs>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="#353f58">
+      <g>
+        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+  </defs>
+  <g id="Canvas_1" fill-opacity="1" stroke="none" stroke-dasharray="none" fill="none" stroke-opacity="1">
+    <title>Canvas 1</title>
+    <rect fill="white" x="-.5" y="-10.5" width="351" height="481"/>
+    <g id="Canvas_1_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_26">
+        <path d="M 99 -10 L 251 -10 C 255.97056 -10 260 -5.970563 260 -1 L 260 341 C 260 345.97056 255.97056 350 251 350 L 99 350 C 94.02944 350 90 345.97056 90 341 L 90 -1 C 90 -5.970563 94.02944 -10 99 -10 Z" fill="#e6e6e6" fill-opacity=".5041391"/>
+        <path d="M 99 -10 L 251 -10 C 255.97056 -10 260 -5.970563 260 -1 L 260 341 C 260 345.97056 255.97056 350 251 350 L 99 350 C 94.02944 350 90 345.97056 90 341 L 90 -1 C 90 -5.970563 94.02944 -10 99 -10 Z" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4.0,4.0" stroke-width="1"/>
+      </g>
+      <g id="Graphic_45">
+        <title>Bézier</title>
+        <path d="M 0 360 L 0 460 C 67635375e-23 465.52285 4.4771525 470 10 470 L 340 470 C 345.52285 470 350 465.52285 350 460 L 350 360 C 350 354.47715 345.52285 350 340 350 L 280 350 C 274.47715 350 270 345.52285 270 340 L 270 240 C 270 234.47715 265.52285 230 260 230 L 90 230 C 84.47715 230 80 234.47715 80 240 L 80 340 C 80 345.52285 75.52285 350 70 350 L 10 350 C 4.4771525 350 -10145306e-22 354.47715 0 360 Z" fill="#6b7ca5" fill-opacity=".5"/>
+        <path d="M 0 360 L 0 460 C 67635375e-23 465.52285 4.4771525 470 10 470 L 340 470 C 345.52285 470 350 465.52285 350 460 L 350 360 C 350 354.47715 345.52285 350 340 350 L 280 350 C 274.47715 350 270 345.52285 270 340 L 270 240 C 270 234.47715 265.52285 230 260 230 L 90 230 C 84.47715 230 80 234.47715 80 240 L 80 340 C 80 345.52285 75.52285 350 70 350 L 10 350 C 4.4771525 350 -10145306e-22 354.47715 0 360 Z" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4.0,4.0" stroke-width="1"/>
+      </g>
+      <g id="Graphic_5">
+        <circle cx="315" cy="409" r="25.0000399475475" fill="white"/>
+        <circle cx="315" cy="409" r="25.0000399475475" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(300 404.5)" fill="#353f58">
+          <tspan font-family="Roboto Mono" font-size="7" fill="#353f58" x="4.498291" y="7" xml:space="preserve">Token</tspan>
+        </text>
+      </g>
+      <g id="Graphic_9">
+        <path d="M 109 0 L 241 0 C 245.97056 3043592e-22 250 4.0294373 250 9 L 250 91 C 250 95.97056 245.97056 100 241 100 L 109 100 C 104.02944 100 100 95.97056 100 91 L 100 9 C 100 4.0294373 104.02944 -6087184e-22 109 0 Z" fill="white"/>
+        <path d="M 109 0 L 241 0 C 245.97056 3043592e-22 250 4.0294373 250 9 L 250 91 C 250 95.97056 245.97056 100 241 100 L 109 100 C 104.02944 100 100 95.97056 100 91 L 100 9 C 100 4.0294373 104.02944 -6087184e-22 109 0 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(105 31.73828)" fill="#353f58">
+          <tspan font-family="Arial" font-size="16" fill="#353f58" x="41.535156" y="14" xml:space="preserve">data set</tspan>
+          <tspan font-family="Roboto Mono" font-size="14" fill="#353f58" x="19.591797" y="32.523438" xml:space="preserve">Set&lt;Token[]&gt;</tspan>
+        </text>
+      </g>
+      <g id="Graphic_11">
+        <rect x="100" y="120" width="150" height="100" fill="white"/>
+        <rect x="100" y="120" width="150" height="100" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(105 161.23828)" fill="#353f58">
+          <tspan font-family="Arial" font-size="16" fill="#353f58" x="41.39453" y="14" xml:space="preserve">Training</tspan>
+        </text>
+      </g>
+      <g id="Graphic_14">
+        <path d="M 109 240 L 241 240 C 245.97056 240 250 244.02944 250 249 L 250 331 C 250 335.97056 245.97056 340 241 340 L 109 340 C 104.02944 340 100 335.97056 100 331 L 100 249 C 100 244.02944 104.02944 240 109 240 Z" fill="white"/>
+        <path d="M 109 240 L 241 240 C 245.97056 240 250 244.02944 250 249 L 250 331 C 250 335.97056 245.97056 340 241 340 L 109 340 C 104.02944 340 100 335.97056 100 331 L 100 249 C 100 244.02944 104.02944 240 109 240 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(105 281.23828)" fill="#353f58">
+          <tspan font-family="Arial" font-size="16" fill="#353f58" x="48.21094" y="14" xml:space="preserve">Model</tspan>
+        </text>
+      </g>
+      <g id="Graphic_15">
+        <rect x="100" y="360" width="150" height="100" fill="white"/>
+        <rect x="100" y="360" width="150" height="100" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(105 401.2383)" fill="#353f58">
+          <tspan font-family="Arial" font-size="16" fill="#353f58" x="36.64453" y="14" xml:space="preserve">Inference</tspan>
+        </text>
+      </g>
+      <g id="Graphic_16">
+        <circle cx="35" cy="409" r="25.0000399475474" fill="white"/>
+        <circle cx="35" cy="409" r="25.0000399475474" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(20 404.5)" fill="#353f58">
+          <tspan font-family="Roboto Mono" font-size="7" fill="#353f58" x=".29760742" y="7" xml:space="preserve">Token[]</tspan>
+        </text>
+      </g>
+      <g id="Line_17">
+        <line x1="175" y1="100" x2="175" y2="110.1" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_18">
+        <line x1="175" y1="220" x2="175" y2="230.1" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_19">
+        <line x1="175" y1="340" x2="175" y2="350.1" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_20">
+        <line x1="59.99938" y1="409.17857" x2="90.10025" y2="409.39357" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_21">
+        <line x1="250" y1="409.4643" x2="280.10087" y2="409.2493" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_370">
+        <text transform="translate(9 358.47656)" fill="white">
+          <tspan font-family="Arial" font-size="16" fill="white" x=".20703125" y="14" xml:space="preserve">context</tspan>
+        </text>
+      </g>
+      <g id="Graphic_371">
+        <text transform="translate(289 358.47656)" fill="white">
+          <tspan font-family="Arial" font-size="16" fill="white" x="10.878906" y="14" xml:space="preserve">next</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>
