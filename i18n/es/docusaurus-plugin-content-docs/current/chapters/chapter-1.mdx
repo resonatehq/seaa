@@ -1,0 +1,848 @@
+---
+id: chapter-1
+title: 1. De la IA a las Aplicaciones Agénticas
+sidebar_label: Capítulo 1
+last_update:
+  date: "09-01-2025"
+---
+
+### Este capítulo cubre
+- Fundamentos de la IA
+- Agentes de IA y aplicaciones agénticas
+- Primer contacto con APIs de IA y agentes de IA
+
+# De la IA a las Aplicaciones Agénticas
+
+Toda aplicación será una aplicación agéntica. Desde agentes de codificación que se ejecutan localmente en tu IDE o terminal hasta agentes empresariales que orquestan acciones en entornos distribuidos, una aplicación agéntica es una aplicación que opera de manera autónoma y continua en busca de un objetivo (Figura 1.1).
+
+<br />
+
+![Figure 1.1](/img/chapter1/figure1.1.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  Figura 1.1: Una aplicación agéntica actúa de manera autónoma y continua en busca de un objetivo
+</div>
+
+<br />
+
+Las aplicaciones agénticas están compuestas por agentes de IA y los agentes de IA están compuestos por APIs de IA. Para diseñar estos sistemas de manera efectiva, debemos entender su estructura y comportamiento desde abajo hacia arriba. En este capítulo, comenzamos en los niveles inferiores para entender cómo los tokens, modelos, entrenamiento e inferencia restringen lo que sucede en los niveles superiores.
+
+## 1.1 Fundamentos de la IA
+
+La transformación de las aplicaciones tradicionales en aplicaciones agénticas está impulsada por los Modelos de Lenguaje Grande (LLMs). A diferencia de las tecnologías de IA anteriores que son específicas y limitadas a un dominio, los LLMs son amplios y de propósito general, capaces de razonar sobre objetivos y orquestar acciones complejas. En consecuencia, a lo largo de este libro examinaremos el mundo de las APIs de IA, agentes y aplicaciones agénticas principalmente a través de la lente de los LLMs.
+
+:::info Marco Conceptual
+Aunque usamos ejemplos concretos de varios proveedores de IA, nos enfocamos en construir un marco conceptual que capture el comportamiento esencial compartido entre sistemas. La mecánica puede diferir, pero los patrones de nivel superior se mantienen consistentes y proporcionan fundamentos confiables para diseñar aplicaciones agénticas
+:::
+
+Los LLMs están construidos a partir de cuatro componentes fundamentales: tokens, modelos, entrenamiento e inferencia (ver Figura 1.2).
+
+<br />
+
+![Figure 1.2](/img/chapter1/figure1.2.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  Figura 1.2: La tubería de modelo de lenguaje grande, mostrando la relación entre tokens, modelos, entrenamiento e inferencia
+</div>
+
+<br />
+
+Los ingenieros de sistemas no implementan estos componentes de bajo nivel, pero entender estos fundamentos, incluso a nivel conceptual, es esencial para construir aplicaciones agénticas confiables y escalables.
+
+### 1.1.1 Tokens
+
+Los LLMs operan con texto: están entrenados con texto, reciben texto como entrada y devuelven texto como salida. Sin embargo, los LLMs procesan el texto de manera diferente a los humanos. Los humanos delimitan el texto en caracteres o en palabras (ver Figura 1.3).
+
+<br />
+
+![Figure 1.3](/img/chapter1/figure1.3.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  Figura 1.3: Texto delimitado en caracteres o palabras por humanos para humanos.
+</div>
+
+<br />
+
+Los LLMs en cambio delimitan el texto en tokens, es decir, identificadores numéricos para fragmentos de texto (ver Figura 1.4).
+
+<br />
+
+![Figure 1.4](/img/chapter1/figure1.4.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  Figura 1.4: Texto delimitado en tokens por el Tokenizador GPT-4o y sus valores numéricos.
+</div>
+
+<br />
+
+Diferentes tokenizadores asignan diferentes valores numéricos a los fragmentos de texto. Para nuestros propósitos, abstraemos la tokenización a su interfaz esencial (ver Listado 1.1):
+
+```typescript
+// Un Token es una representación numérica de un fragmento de texto
+type Token = number
+
+interface Tokenizer {
+  // Función abstracta para representar la traducción de texto a tokens
+  function encode(String) : Token[]
+
+  // Función abstracta para representar la traducción de tokens a texto
+  function decode(Token[]) : String
+}
+```
+
+<div className="listing-description">
+  Listado 1.1: Representación abstracta de un tokenizador como una interfaz con funciones de codificación y decodificación
+</div>
+
+Un tokenizador mantiene un mapeo de tokens a sus fragmentos de texto asociados. Además, puede definir tokens especiales o tokens de control (similares a los caracteres de control como el retorno de carro en ASCII o Unicode). El conjunto de todos los tokens también se llama alfabeto o vocabulario.
+
+### 1.1.2 Modelos
+
+Los modelos son la cara pública de la IA. Los nuevos lanzamientos de OpenAI, Anthropic y otros proveedores llegan con gran expectación, son ampliamente discutidos, elogiados y criticados. Hoy, un lanzamiento es un evento cultural, las demostraciones se vuelven virales y las anécdotas de comportamiento sorprendente o decepcionante circulan rápidamente.
+
+Debajo de la publicidad, los modelos son sorprendentemente mundanos: Un conjunto ordenado de parámetros (ver Listado 1.2).
+
+```typescript
+// Tipo para representar un parámetro del modelo
+type Param = number;
+
+// Tipo para representar un modelo
+type Model = Param[];
+
+// Longitud de la ventana de contexto
+function length(model : Model) : number
+```
+
+<div className="listing-description">
+  Listado 1.2: Representación de un modelo como un arreglo de parámetros
+</div>
+
+Entre proveedores, los LLMs se caracterizan por dos propiedades:
+
+**Número de Parámetros**: El número de parámetros que un modelo puede aprender durante el entrenamiento. Esto significa cuánta información puede almacenar el modelo *en total*. Los modelos actuales van desde miles de millones hasta billones de parámetros.
+
+**Ventana de Contexto**: El número de tokens que un modelo puede procesar durante la inferencia. Esto significa cuánta información puede considerar el modelo *a la vez*. Los modelos actuales van desde decenas de miles hasta más de 2 millones de tokens.
+
+En efecto, estos parámetros forman una tabla de búsqueda gigante. Para cualquier secuencia de tokens hasta la ventana de contexto, el modelo produce un vector de probabilidad que asigna a cada token en el vocabulario una probabilidad de ser el siguiente. Esta es la función singular del modelo: dado un contexto, predecir el siguiente token.
+
+Los miles de millones de parámetros codifican patrones aprendidos de los datos de entrenamiento. Estos patrones capturan todo, desde reglas gramaticales básicas hasta estrategias de razonamiento complejas, conocimiento fáctico y preferencias estilísticas. Juntos, definen tanto las capacidades del modelo como sus limitaciones.
+
+:::note Formalización
+Usando un formalismo como TLA+, la Lógica Temporal de Acciones, podemos formalizar un modelo como:
+
+```tla
+# El vocabulario del Modelo de Lenguaje Grande
+TOKENS == { ... }
+
+# La longitud de la ventana de contexto
+LENGTH == 1000000
+
+# Un modelo mapea cada secuencia de tokens a una probabilidad por token
+MODELS ==
+  [ { s ∈ Seq(TOKENS) : Len(s) ≤ LENGTH } → [TOKENS → [0.0 .. 1.0]] ]
+```
+:::
+
+Los modelos impactan e inspiran asombro a través de los vastos recursos que requieren durante el entrenamiento y las capacidades que demuestran durante la inferencia.
+
+### 1.1.3 Entrenamiento
+
+El entrenamiento es la función de crear o actualizar un modelo, o más específicamente los parámetros de un modelo, basándose en un conjunto de datos (ver Listado 1.3).
+
+```typescript
+// Variable para representar el modelo inicial, vacío o desde cero
+const init: Model = [];
+
+// Función abstracta para representar el entrenamiento
+function train(model: Model, dataset: Set<Token[]>): Model
+```
+
+<div className="listing-description">
+  Listado 1.3: Firma de función de entrenamiento abstracta
+</div>
+
+Hay dos variantes de entrenamiento:
+
+1. **Entrenamiento desde un modelo desde cero**: Aprende los parámetros del modelo comenzando desde un modelo vacío. Requiere muchos datos de entrenamiento, recursos computacionales y tiempo.
+
+2. **Entrenamiento desde un modelo base (ajuste fino)**: Aprende los parámetros del modelo comenzando desde un modelo base. Requiere menos datos de entrenamiento, recursos computacionales y tiempo.
+
+:::info Decisión de Modelado
+
+Podríamos modelar la creación y actualización de un modelo como dos funciones diferentes. Sin embargo, al representar ambas como una función podemos reducir nuestra carga cognitiva y podemos establecer una relación entre modelos, todos enraizados en el modelo desde cero (ver Figura 1.5).
+
+:::
+
+<br />
+
+![Figure 1.5](/img/chapter1/figure1.5.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  Figura 1.5: Relaciones de modelos mostrando cómo todos los modelos derivan del modelo inicial desde cero a través del entrenamiento
+</div>
+
+<br />
+
+:::note Formalización
+Puedes pensar en el entrenamiento como elegir no determinísticamente un modelo en el espacio de modelos. Aquí, la elección no determinística abstrae completamente cualquier mecánica de entrenamiento.
+
+```tla
+# Abstraemos el entrenamiento eligiendo no determinísticamente un modelo en el
+# espacio de modelos
+train(dataset) ==
+  CHOOSE model ∈ MODELS : TRUE
+```
+:::
+
+Debido a los significativos requisitos de recursos, el entrenamiento desde cero es factible solo para laboratorios de IA, mientras que el ajuste fino es factible para muchos equipos.
+
+### 1.1.4 Inferencia
+
+La inferencia es la función de aplicar un modelo a una secuencia de tokens para obtener el siguiente token (ver Listado 1.4).
+
+```typescript
+function infer(model : Model, context : Token[]) : Token
+```
+
+<div className="listing-description">
+  Listado 1.4: Firma de función de inferencia abstracta
+</div>
+
+Los modelos son funciones matemáticas determinísticas: dada la misma entrada, siempre producen la misma distribución de probabilidad. Sin embargo, en lugar de seleccionar siempre el token de mayor probabilidad, la inferencia muestrea de la distribución de probabilidad usando estrategias como el muestreo top-k. Esta aleatoriedad controlada hace que las salidas sean variadas y aparentemente creativas. Por ejemplo, dado el prompt "La capital de Francia es", la inferencia puede (iterativamente) producir "París" o "la ciudad de París."
+
+:::info Aleatoriedad Controlada
+El muestreo no es verdaderamente aleatorio. El muestreo se basa en generadores de números pseudoaleatorios instanciados con un valor semilla. Dada la misma semilla y el mismo contexto, la inferencia produce resultados idénticos cada vez. Sin embargo, este parámetro de semilla a menudo no está expuesto en las interfaces de API, por lo que debemos pensar en la inferencia como aleatoria por defecto.
+:::
+
+:::note Formalización
+infer selecciona los tokens top-k, es decir, los tokens de mayor probabilidad y hace una elección no determinística
+
+```tla
+# Abstraemos sobre la inferencia eligiendo no determinísticamente
+# un siguiente token de los 10 tokens más probables dado el contexto
+Infer(model, context) ==
+  CHOOSE token ∈ TOPK(model[context], 10)
+```
+:::
+
+## 1.2 Modelos y APIs de IA
+
+Los componentes fundamentales, tokens, modelos, entrenamiento e inferencia, se combinan para crear APIs de IA prácticas. Al iterar la inferencia, prediciendo un token a la vez, transformamos las distribuciones de probabilidad en texto coherente. Diferentes enfoques de entrenamiento producen diferentes capacidades de API. Examinaremos tres tipos diferentes de modelos:
+
+- Modelos de completado (también llamados modelos base)
+- Modelos de conversación (también llamados modelos de chat)
+- Modelos de llamada de herramientas
+
+<br />
+
+![Figure 1.6](/img/chapter1/figure1.6.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  Figura 1.6: Tipos de modelos y sus relaciones de entrenamiento/ajuste fino
+</div>
+
+### 1.2.1 Modelos de Completado
+
+Los modelos de completado están entrenados para completar texto. Sus datos de entrenamiento consisten en secuencias de tokens envueltas en marcadores de límite especiales:
+
+- **BOS**—Inicio de Secuencia. Marca el inicio de la secuencia de tokens.
+- **EOS**—Fin de Secuencia. Marca el final de la secuencia de tokens.
+
+BOS y EOS son componentes importantes del entrenamiento y permiten que el modelo codifique el inicio y el final de las secuencias. Así es como los modelos aprenden a generar respuestas completas y delimitadas en lugar de continuar indefinidamente.
+
+```
+<BOS>
+  La capital de Francia es París.
+<EOS>
+```
+
+Los modelos de completado completan texto generando iterativamente el siguiente token hasta que alcanzamos un token de parada (ver Listado 1.5)
+
+```typescript
+
+// Asume tokenizador global con tokens especiales BOS y EOS
+
+function generate(model: Model, promptTokens: Token[]): Token[] {
+  const answerTokens: Token[] = [];
+
+  while (true) {
+    const next = infer(model, [
+      tokenizer.BOS,
+      ...promptTokens,
+      ...answerTokens
+    ]);
+    if (next == tokenizer.EOS) {
+      break;
+    }
+    answerTokens.push(next);
+  }
+
+  return answerTokens;
+}
+
+function complete(model: Model, prompt: string): string {
+  const promptTokens: Token[] = tokenizer.encode(prompt);
+  const answerTokens: Token[] = generate(model, promptTokens);
+  return tokenizer.decode(answerTokens);
+}
+```
+
+<div className="listing-description">
+  Listado 1.5: Funciones de generación de tokens y completado de texto para modelos base
+</div>
+
+Puedes pensar en este tipo de modelo y su API de generación como una máquina de completado para oraciones: dado un prompt, la API genera un completado del prompt.
+
+```
+prompt: La capital de Francia
+answer: es París
+```
+
+Los modelos de completado fueron los primeros LLMs disponibles. Aunque limitados comparados con los modelos de conversación y llamada de herramientas de hoy, siguen siendo la base conceptual: cada interacción todavía se reduce a predicción iterativa de tokens.
+
+### 1.2.2 Modelos de Conversación
+
+Los modelos de conversación son modelos de completado ajustados finamente para completar una conversación mientras siguen instrucciones. Sus datos de entrenamiento agregan marcadores de rol para distinguir entre instrucciones del sistema y participantes:
+
+```
+<BOS>
+  <|BOT role=system|>
+    Eres un asistente útil.
+  <|EOT|>
+  <|BOT role=user|>
+    ¿Cuál es la capital de Francia?
+  <|EOT|>
+  <|BOT role=assistant|>
+    La capital de Francia es París.
+  <|EOT|>
+<EOS>
+```
+
+Los marcadores de rol representan una progresión crucial: la emergencia de un protocolo estructurado. El modelo aprende no solo a completar texto, sino a participar en una conversación de múltiples turnos, manteniendo el contexto entre hablantes y siguiendo instrucciones a nivel del sistema.
+
+Como los modelos de completado, los modelos de conversación generan tokens iterativamente hasta que alcanzamos un token de parada (ver Listado 1.6):
+
+```typescript
+type Turn = {
+  role: "SYSTEM" | "USER" | "ASSISTANT"
+  text: string
+}
+
+function converse(model : Model, prompt: Turn[]) : Turn {
+  const promptTokens: Token[] = prompt.flatMap(turn => [
+    tokenizer.BOT(turn.role),
+    ...tokenizer.encode(turn.text),
+    tokenizer.EOT()
+  ]);
+
+  const answerTokens: Token[] = generate(model, promptTokens)
+
+  // Analiza el texto de respuesta para extraer el turno del asistente
+  return Turn.parse(tokenizer.decode(answerTokens))
+}
+```
+
+<div className="listing-description">
+  Listado 1.6: Función de conversación para modelos de chat con turnos basados en roles
+</div>
+
+Puedes pensar en este tipo de modelo y su API de generación como una máquina de completado para conversaciones: dado un prompt, la API genera un completado de la respuesta.
+
+```
+prompt: ¿Cuál es la capital de Francia?
+answer: La capital de Francia es París.
+```
+
+Aunque los modelos de conversación pueden interactuar con usuarios, no pueden interactuar con el entorno. Los modelos de llamada de herramientas cierran esta brecha.
+
+### 1.2.3 Modelos de Llamada de Herramientas
+
+Los modelos de llamada de herramientas extienden los modelos de conversación con la habilidad de invocar funciones externas. Sus datos de entrenamiento incluyen definiciones de herramientas en el prompt del sistema y un nuevo rol para respuestas de herramientas:
+
+```
+<BOS>
+  <|BOT role=system|>
+    Eres un asistente útil. Puedes llamar herramientas:
+      - getWeather(location: string): devuelve el clima actual.
+  <|EOT|>
+  <|BOT role=user|>
+    ¿Cómo está el clima en París?
+  <|EOT|>
+  <|BOT role=assistant|>
+    tool:getWeather("París")
+  <|EOT|>
+  <|BOT role=tool|>
+    28C soleado
+  <|EOT|>
+  <|BOT role=assistant|>
+    El clima actual en París es 28C y soleado.
+  <|EOT|>
+<EOS>
+```
+
+El modelo aprende a reconocer cuando se necesita información externa o acciones y genera llamadas de herramientas estructuradas. Sin embargo, el modelo no ejecuta herramientas directamente—produce instrucciones que el llamador debe ejecutar, devolviendo resultados al modelo en la siguiente interacción.
+
+Puedes pensar en este tipo de modelo y su API de generación como una máquina de completado para conversaciones con acceso a herramientas para hacer observaciones o disparar acciones:
+
+```
+prompt: ¿Cómo está el clima en París?
+answer: tool:getWeather("París").
+prompt: 28C soleado
+answer: El clima actual en París es 28C y soleado.
+```
+
+Aunque los modelos de llamada de herramientas pueden generar respuestas e invocar funciones, siguen siendo fundamentalmente generativos, produciendo una salida para cada entrada.
+
+## 1.3 Agentes de IA
+
+Los agentes agregan orquestación y gestión de estado a la generación: a diferencia de las APIs de IA sin estado de un solo turno, los agentes son componentes con estado de múltiples turnos capaces de perseguir persistentemente un objetivo.
+
+### 1.3.1 El Agente
+
+Definimos un agente A como una tupla de modelo M, un conjunto de herramientas T, y un prompt del sistema s:
+
+```
+A = (M, T, s)
+```
+
+Definimos una instancia de agente Ai (también llamada sesión o conversación), con un identificador i como una tupla de modelo M, herramientas T, prompt del sistema s, e historial h:
+
+```
+Ai = (M, T, s, h)
+```
+
+El historial h transforma la definición abstracta del agente en una instancia o ejecución del agente. El historial está estructurado como una secuencia de intercambios:
+
+```
+h = [(u₁, a₁), (u₂, a₂), (u₃, a₃), (u₄, a₄), ...]
+```
+
+donde u representa un mensaje del usuario y a representa una respuesta del agente.
+
+Cuando se involucra la llamada de herramientas, el historial se expande para incluir llamadas de herramientas (t) y sus resultados (r):
+
+```
+h = [(u₁, a₁), (u₂, t₁), (r₁, a₂), (u₃, a₃), ...]
+```
+
+### 1.3.2 El Bucle del Agente
+
+Los Agentes de IA están estructurados alrededor de un bucle de orquestación central que coordina entre la API de IA, usuario y herramientas mientras gestiona el estado de la conversación. Este bucle del agente representa el principal desafío de ingeniería en aplicaciones agénticas. El bucle es responsable de gestionar el estado, coordinar operaciones asíncronas de larga duración y manejar la recuperación en caso de falla.
+
+## 1.4 Aplicaciones Agénticas
+
+Las aplicaciones agénticas van desde sistemas de un solo agente hasta sistemas multi-agente donde los agentes se coordinan con otros agentes. En sistemas multi-agente, los agentes pueden invocar otros agentes, creando grafos de llamada dinámicos (ver Figura 1.7).
+
+<br />
+
+![Figure 1.7](/img/chapter1/figure1.7.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  Figura 1.7: Los sistemas multi-agente forman grafos de llamada dinámicos con agentes invocando otros agentes y herramientas
+</div>
+
+<br />
+
+## 1.5 Primer Contacto
+
+Habiendo establecido los fundamentos, interactuemos con una API de IA real. Usaremos principalmente OpenAI para ejemplos, aunque los patrones se aplican a otros proveedores.
+
+### 1.5.1 API Básica
+
+El Listado 1.7 ilustra la interacción más básica con la API. Proporcionamos el modelo deseado, el contexto, es decir, el historial de la conversación y el prompt actual, y solicitamos un completado.
+
+```typescript
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+async function main() {
+  const completion = await openai.chat.completions.create({
+    model: "gpt-5",
+    messages: [{
+      role: "user", content: "¿Cuál es la capital de Francia?"
+    }]
+  });
+
+  console.log(completion);
+}
+
+main();
+```
+
+<div className="listing-description">
+  Listado 1.7: Interacción básica con la API de OpenAI
+</div>
+
+La API devuelve una respuesta estructurada (Listado 1.8):
+
+```json {10}
+{
+  "id": "chatcmpl-C5rNhjKYS8nYoXdnZmTjK5T2FEsVX",
+  "object": "chat.completion",
+  "model": "gpt-5-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "París.",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "total_tokens": 23,
+    "prompt_tokens": 12,
+    "completion_tokens": 11
+  }
+}
+```
+
+<div className="listing-description">
+  Listado 1.8: La respuesta del asistente
+</div>
+
+Sin embargo, la mayoría de las veces en este libro, simplemente estamos interesados en la respuesta de la IA (Listado 1.9)
+
+```typescript
+const answer : string? = completion.choices[0]?.message?.content;
+```
+
+<div className="listing-description">
+  Listado 1.9: Extrayendo el contenido de respuesta del asistente
+</div>
+
+### 1.5.2 API de Streaming
+
+Muchas APIs de IA ofrecen dos modos de operación: lote (devolviendo la respuesta de una vez) y streaming (devolviendo la respuesta progresivamente, token por token). El modo streaming tiene el potencial de mejorar la experiencia del usuario: En lugar de esperar, los usuarios ven la respuesta formándose en tiempo real, creando una sensación natural y conversacional y reduciendo la latencia percibida (ver Listado 1.10).
+
+```typescript
+import OpenAI from "openai";
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+async function main() {
+  const stream = await openai.chat.completions.create({
+    model: "gpt-4",
+    messages: [{
+      role: "user", content: "Cuéntame sobre París"
+    }],
+    stream: true,
+  });
+
+  let answer = "";
+
+  for await (const chunk of stream) {
+    const content = chunk.choices?.[0]?.delta?.content;
+    if (content) {
+      process.stdout.write(content);
+      answer += content;
+    }
+  }
+
+}
+
+main();
+```
+
+<div className="listing-description">
+  Listado 1.10: API de Streaming para respuestas token por token en tiempo real
+</div>
+
+El streaming viene con desafíos:
+
+- **Efímero vs Duradero** El streaming introduce complejidad arquitectónica. Mientras los tokens llegan progresivamente para mostrar, la aplicación necesita la respuesta completa para actualizar el historial de conversación y disparar operaciones dependientes. Este doble requisito, manejar tanto el flujo efímero como el resultado duradero, complica el diseño del sistema, particularmente cuando diferentes componentes necesitan diferentes vistas de la misma respuesta.
+
+### 1.5.3 Llamada de Herramientas
+
+La llamada de herramientas extiende los modelos de conversación con la habilidad de invocar funciones externas, permitiendo que la IA interactúe con el mundo más allá de la generación de texto a través de llamadas de función estructuradas (ver Listado 1.11).
+
+```typescript
+import OpenAI from "openai";
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+const tools = [
+  {
+    type: "function",
+    function: {
+      name: "get_current_weather",
+      description: "Obtener el clima actual en una ubicación dada",
+      parameters: {
+        type: "object",
+        properties: {
+          location: {
+            type: "string",
+            description:
+              "La ciudad, estado y país, ej. Berlín, Alemania o San Francisco, CA, Estados Unidos",
+          },
+        },
+        required: ["location"],
+      },
+    },
+  },
+];
+
+async function main() {
+  const completion = await openai.chat.completions.create({
+    model: "gpt-5",
+    messages: [
+      {
+        role: "user",
+        content: "¿Cuál es el clima en París ahora mismo",
+      },
+    ],
+    tools: tools,
+  });
+
+  console.log(JSON.stringify(completion));
+}
+
+main();
+
+```
+
+<div className="listing-description">
+  Listado 1.11: API de Llamada de Herramientas
+</div>
+
+La API devuelve una respuesta que contiene una llamada de herramienta (Listado 1.12):
+
+```json
+{
+  "id": "chatcmpl-C76JQRfuc9HXpErPldbVyRuieZ8Lm",
+  "object": "chat.completion",
+  "created": 1755808596,
+  "model": "gpt-5-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          {
+            "id": "call_hQF9XaYtq8ZO6LJl6S3WctoU",
+            "type": "function",
+            "function": {
+              "name": "get_current_weather",
+              "arguments": "{\"location\":\"París, Francia\"}"
+            }
+          }
+        ],
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "tool_calls"
+    }
+  ],
+}
+```
+
+<div className="listing-description">
+  Listado 1.12: La respuesta del asistente
+</div>
+
+La llamada de herramientas viene con desafíos:
+
+- **La API no ejecuta herramientas directamente.** En cambio, la API devuelve una representación estructurada de la llamada prevista. La aplicación que llama debe ejecutar la herramienta y devolver resultados.
+
+- **Las llamadas de herramientas crean dependencias bloqueantes.** La conversación no puede proceder hasta que el resultado de la herramienta se proporcione en el siguiente turno. Perder este paso genera una excepción.
+
+Este patrón hace que la aplicación sea responsable de la ejecución de herramientas, coordinación y manejo de fallas, agregando complejidad significativa más allá de gestionar la generación de texto.
+
+### 1.5.4 Un agente simple
+
+El Listado 1.13 demuestra la transición de API de IA a Agente de IA. Mientras los ejemplos anteriores mostraron interacciones aisladas de un solo turno donde cada llamada de API existía independientemente, esta implementación revela cómo envolver la API de IA en un bucle persistente la transforma en un agente conversacional. La idea clave es la memoria—al mantener el historial de conversación a través de las interacciones, transformamos llamadas de API sin estado en diálogo con estado.
+
+```typescript {15-17}
+import OpenAI from "openai";
+// peripherals.ts proporciona utilidades simples de E/S de consola
+import { getUserInput, closeUserInput } from "./peripherals";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+async function main() {
+  const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [{
+    role: "system", content: "Termina tu respuesta final con <EXIT>.",
+  }];
+
+  while (true) {
+    let prompt = await getUserInput(
+      "Usuario (escribe 'exit' para salir):",
+    );
+
+    if (prompt.toLowerCase() === "exit") {
+      break;
+    }
+
+    messages.push({role: "user", content: prompt});
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: messages
+    });
+
+    const answer = completion.choices[0]?.message?.content;
+
+    messages.push({role: "assistant", content: answer});
+
+    console.log("Asistente:", answer);
+
+    if (answer.includes("<EXIT>")) {
+      break;
+    }
+  }
+
+  closeUserInput();
+}
+
+main();
+```
+
+<div className="listing-description">
+  Listado 1.13: Agente conversacional simple con interacción basada en bucle
+</div>
+
+Esta implementación mínima revela la arquitectura esencial que subyace a todos los agentes de IA. Cada agente debe abordar preocupaciones fundamentales:
+
+- **Gestión de Estado**: Mantener el historial de conversación a través de las interacciones. Aquí, el arreglo `messages` acumula diálogo, transformando llamadas de API sin estado en conversación con estado.
+
+- **Gestión de Identidad**: Mantener la identidad única del agente. Aquí, la gestión de identidad consiste solo en depender del proceso en ejecución.
+
+- **Gestión de Ciclo de Vida**: Manejar inicialización, ejecución, suspensión, reanudación y terminación. Aquí, la gestión del ciclo de vida consiste solo en condiciones básicas de terminación (usuario "exit", IA `<EXIT>`).
+
+Aunque nuestro agente simple funciona correctamente, expone desafíos fundamentales que se vuelven críticos a escala. El agente pasa la mayor parte de su tiempo inactivo, bloqueando en `getUserInput()`. Más críticamente, este acoplamiento fuerte entre proceso y agente crea fragilidad—si el proceso se bloquea, termina o requiere reinicio, toda la instancia del agente desaparece, llevándose todo el contexto de conversación con él.
+
+### 1.5.5 Hacia Agentes Persistentes
+
+La falla fundamental en nuestra arquitectura de agente simple es el enlace de la instancia del agente a la instancia del proceso. Este acoplamiento crea problemas insuperables en sistemas de producción:
+
+**Crisis de Identidad y Estado**: La identidad y memoria del agente debe trascender el sustrato que ejecuta el agente. Si un reinicio del sistema o un bloqueo oblitera la identidad del agente y el conocimiento acumulado, el agente es inadecuado para cualquier compromiso significativo a largo plazo.
+
+**Imposibilidad Operacional**: Los procesos de larga duración no pueden coexistir con las prácticas operacionales modernas. Las plataformas en la nube reciclan máquinas virtuales, reinician contenedores y terminan procesos serverless cuando no están en uso. Un agente que no puede sobrevivir estas operaciones rutinarias es operacionalmente inviable. Necesitamos agentes que puedan hacer checkpoint de su estado, suspender ejecución, migrar a diferentes procesos y reanudar sin problemas.
+
+La idea central es que las instancias de agente deben ser portables, capaces de moverse entre procesos y máquinas mientras preservan su identidad, estado e interacciones continuas con el usuario, herramientas u otros agentes. Esto requiere una separación arquitectónica fundamental entre la existencia lógica y física del agente.
+
+El Listado 1.14 representa un intento crudo de abordar estos problemas a través de persistencia basada en archivos:
+
+```typescript
+import OpenAI from "openai";
+import fs from "fs/promises";
+import path from "path";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const SYSTEM = "Termina tu respuesta final con el símbolo <EXIT>.";
+
+interface ConversationData {
+  messages: OpenAI.Chat.ChatCompletionMessageParam[];
+}
+
+async function loadConversation(
+  identifier: string,
+): Promise<OpenAI.Chat.ChatCompletionMessageParam[]> {
+  const filePath = path.join(process.cwd(), `${identifier}.json`);
+
+  try {
+    const data = await fs.readFile(filePath, "utf-8");
+    const conversation: ConversationData = JSON.parse(data);
+    return conversation.messages;
+  } catch (error) {
+    // El archivo no existe, devolver nueva conversación con mensaje del sistema
+    return [
+      {
+        role: "system",
+        content: SYSTEM,
+      },
+    ];
+  }
+}
+
+async function saveConversation(
+  identifier: string,
+  messages: OpenAI.Chat.ChatCompletionMessageParam[],
+): Promise<void> {
+  const filePath = path.join(process.cwd(), `${identifier}.json`);
+  const conversation: ConversationData = { messages };
+  await fs.writeFile(filePath, JSON.stringify(conversation, null, 2));
+}
+
+async function main() {
+  // Analizar argumentos de línea de comandos
+  const args = process.argv.slice(2);
+
+  if (args.length < 2) {
+    console.error("Uso: ts-node index-4.ts <identificador> <prompt>");
+    process.exit(1);
+  }
+
+  const identifier = args[0];
+  const prompt = args.slice(1).join(" ");
+
+  try {
+    // Cargar conversación existente o crear nueva
+    const messages = await loadConversation(identifier);
+
+    // Agregar mensaje del usuario
+    messages.push({role: "user", content: prompt});
+
+    // Obtener completado de OpenAI
+    const completion = await openai.chat.completions.create({
+      model: "gpt-5",
+      messages: messages
+    });
+
+    const answer = completion.choices[0]?.message?.content;
+
+    if (answer) {
+      // Agregar respuesta del asistente
+      messages.push({role: "assistant", content: answer});
+
+      // Guardar conversación
+      await saveConversation(identifier, messages);
+
+      // Mostrar la respuesta
+      console.log("Asistente:", answer);
+    } else {
+      console.error("No hay respuesta de OpenAI");
+    }
+  } catch (error) {
+    console.error("Ocurrió un error:", error);
+    process.exit(1);
+  }
+}
+
+// Ejecutar la función principal
+main();
+```
+
+<div className="listing-description">
+  Listado 1.14: Estado de conversación persistente usando almacenamiento de archivos
+</div>
+
+Esta implementación ingenua destaca por qué los sistemas de agentes requieren infraestructura sofisticada para gestión de identidad, persistencia de estado y orquestación de procesos—los desafíos fundamentales que debemos resolver para construir aplicaciones agénticas listas para producción.
+
+## 1.6 Resumen
+
+- Un token es un identificador numérico para un fragmento de texto.
+- Un tokenizador mantiene mapeos bidireccionales entre tokens y fragmentos de texto.
+- Un modelo es un conjunto ordenado de parámetros que asigna probabilidades a tokens dado un contexto.
+- Los modelos se caracterizan por el número de parámetros (capacidad de almacenamiento de información) y ventana de contexto (capacidad de procesamiento de información).
+- El entrenamiento crea o actualiza parámetros del modelo a partir de conjuntos de datos, ya sea desde cero o a través de ajuste fino.
+- La inferencia aplica un modelo para predecir el siguiente token, usando aleatoriedad controlada para salidas variadas.
+- Los modelos de completado generan continuaciones de texto a partir de prompts.
+- Los modelos de conversación agregan estructura basada en roles para mantener conversación multi-turno.
+- Los modelos de llamada de herramientas generan llamadas de función estructuradas pero no las ejecutan directamente.
+- Los agentes combinan modelos, herramientas y prompts del sistema con gestión de estado persistente.
+- Las instancias de agentes mantienen historial de conversación para transformar APIs sin estado en sistemas con estado.
+- Construir agentes de producción requiere infraestructura sofisticada para gestión de identidad, persistencia de estado y orquestación de procesos.

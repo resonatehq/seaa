@@ -1,0 +1,10 @@
+{
+  "label": "Capítulos",
+  "position": 3,
+  "collapsed": false,
+  "collapsible": false,
+  "link": {
+    "type": "doc",
+    "id": "chapters/index"
+  }
+}
