@@ -1,0 +1,10 @@
+{
+  "title": {
+    "message": "Systems Engineering for Agentic Applications",
+    "description": "The title in the navbar"
+  },
+  "logo.alt": {
+    "message": "SEAA logo",
+    "description": "The alt text of navbar logo"
+  }
+}
