@@ -1,0 +1,10 @@
+{
+  "title": {
+    "message": "Ingeniería de Sistemas para Aplicaciones Agénticas",
+    "description": "The title in the navbar"
+  },
+  "logo.alt": {
+    "message": "Logo SEAA",
+    "description": "The alt text of navbar logo"
+  }
+}

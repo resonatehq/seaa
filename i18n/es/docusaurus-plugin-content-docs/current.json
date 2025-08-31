@@ -1,0 +1,10 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.defaultSidebar.category.Chapters": {
+    "message": "Capítulos",
+    "description": "The label for category Chapters in sidebar defaultSidebar"
+  }
+}

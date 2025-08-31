@@ -1,0 +1,845 @@
+---
+id: chapter-1
+title: 1. AI에서 에이전틱 애플리케이션으로
+sidebar_label: Chapter 1
+last_update:
+  date: "09-01-2025"
+---
+
+### 이 챕터에서 다루는 내용
+- AI 기초
+- AI 에이전트와 에이전틱 애플리케이션
+- AI API와 AI 에이전트와의 첫 만남
+
+모든 애플리케이션이 에이전틱 애플리케이션이 될 것입니다. IDE나 터미널에서 로컬로 실행되는 코딩 에이전트부터 분산 환경에서 작업을 조율하는 엔터프라이즈 에이전트까지, 에이전틱 애플리케이션은 목표를 추구하며 자율적이고 지속적으로 운영되는 애플리케이션입니다 (그림 1.1).
+
+<br />
+
+![Figure 1.1](/img/chapter1/figure1.1.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  그림 1.1: 에이전틱 애플리케이션은 목표를 추구하며 자율적이고 지속적으로 행동합니다
+</div>
+
+<br />
+
+에이전틱 애플리케이션은 AI 에이전트로 구성되고, AI 에이전트는 AI API로 구성됩니다. 이러한 시스템을 효과적으로 엔지니어링하려면 하위에서 상위로 구조와 동작을 이해해야 합니다. 이 챕터에서는 토큰, 모델, 훈련, 추론이 상위 레벨에서 일어나는 일을 어떻게 제약하는지 이해하기 위해 하위 레벨부터 시작합니다.
+
+## 1.1 AI 기초
+
+전통적인 애플리케이션을 에이전틱 애플리케이션으로 변환하는 것은 대규모 언어 모델(LLM)에 의해 구동됩니다. 좁고 도메인별로 특화된 이전 AI 기술과 달리, LLM은 광범위하고 범용적이며, 목표에 대해 추론하고 복잡한 작업을 조율할 수 있습니다. 따라서 이 책 전반에서 AI API, 에이전트, 에이전틱 앱의 세계를 주로 LLM의 관점에서 살펴볼 것입니다.
+
+:::info 개념적 프레임워크
+다양한 AI 제공업체의 구체적인 예제를 사용하지만, 시스템 전반에 공통되는 본질적 동작을 포착하는 개념적 프레임워크를 구축하는 데 중점을 둡니다. 세부 메커니즘은 다를 수 있지만, 상위 수준의 패턴은 일관되게 유지되며 에이전틱 애플리케이션을 엔지니어링하기 위한 신뢰할 수 있는 기반을 제공합니다
+:::
+
+LLM은 네 가지 기본 구성 요소로 구성됩니다: 토큰, 모델, 훈련, 추론 (그림 1.2 참조).
+
+<br />
+
+![Figure 1.2](/img/chapter1/figure1.2.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  그림 1.2: 토큰, 모델, 훈련, 추론 사이의 관계를 보여주는 대규모 언어 파이프라인
+</div>
+
+<br />
+
+시스템 엔지니어는 이러한 저수준 구성 요소를 직접 구현하지는 않지만, 이러한 기초를 개념적 수준에서라도 이해하는 것은 안정적이고 확장 가능한 에이전틱 애플리케이션을 구축하는 데 필수적입니다.
+
+### 1.1.1 토큰
+
+LLM은 텍스트로 작동합니다: 텍스트로 훈련되고, 텍스트를 입력으로 받으며, 텍스트를 출력으로 반환합니다. 하지만 LLM은 인간과 다르게 텍스트를 처리합니다. 인간은 텍스트를 문자나 단어로 구분합니다 (그림 1.3 참조).
+
+<br />
+
+![Figure 1.3](/img/chapter1/figure1.3.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  그림 1.3: 인간이 인간을 위해 문자나 단어로 구분한 텍스트.
+</div>
+
+<br />
+
+LLM은 대신 텍스트를 토큰으로 구분합니다. 즉, 텍스트 조각에 대한 숫자 식별자로 구분합니다 (그림 1.4 참조).
+
+<br />
+
+![Figure 1.4](/img/chapter1/figure1.4.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  그림 1.4: GPT-4o 토큰화기가 토큰으로 구분한 텍스트와 그 숫자 값들.
+</div>
+
+<br />
+
+서로 다른 토큰화기들은 텍스트 조각에 다른 숫자 값을 할당합니다. 우리의 목적에서는 토큰화를 필수적인 인터페이스로 추상화합니다 (리스팅 1.1 참조):
+
+```typescript
+// A Token is a numerical representation of a fragment of text
+type Token = number
+
+interface Tokenizer {
+  // Abstract function to represent the translation of text into tokens
+  function encode(String) : Token[]
+
+  // Abstract function to represent the translation of tokens into text
+  function decode(Token[]) : String
+}
+```
+
+<div className="listing-description">
+  리스팅 1.1: encode와 decode 함수를 가진 인터페이스로서 토큰화기의 추상적 표현
+</div>
+
+토큰화기는 토큰과 관련된 텍스트 조각 사이의 매핑을 유지합니다. 또한 ASCII나 Unicode의 개행 문자 같은 제어 문자와 유사한 특수 토큰이나 제어 토큰을 정의할 수 있습니다. 모든 토큰의 집합을 알파벳 또는 어휘라고도 합니다.
+
+### 1.1.2 모델
+
+모델은 AI의 공개적 얼굴입니다. OpenAI, Anthropic 및 기타 제공업체의 새로운 버전들은 큰 기대와 함께 출시되며, 광범위하게 논의되고 칭찬받거나 비판받습니다. 오늘날 버전 출시는 문화적 이벤트가 되었고, 데모는 바이럴하게 퍼지며, 놀라우거나 실망스러운 동작의 일화들이 빠르게 퍼집니다.
+
+과대 광고 아래에서, 모델은 놓라울 정도로 평범합니다: 순서가 있는 매개변수 집합입니다 (리스팅 1.2 참조).
+
+```typescript
+// Type to represent a model parameter
+type Param = number;
+
+// Type to represent a model
+type Model = Param[];
+
+// Context window length
+function length(model : Model) : number
+```
+
+<div className="listing-description">
+  리스팅 1.2: 매개변수 배열로서의 모델 표현
+</div>
+
+제공업체를 가리지 않고, LLM은 두 가지 속성으로 특징지어집니다:
+
+**매개변수 수**: 모델이 훈련 중에 학습할 수 있는 매개변수의 수. 이는 모델이 *전체적으로* 저장할 수 있는 정보의 양을 의미합니다. 현재 모델들은 수십억에서 수조 개의 매개변수를 가집니다.
+
+**컨텍스트 윈도우**: 모델이 추론 중에 처리할 수 있는 토큰의 수. 이는 모델이 *한 번에* 고려할 수 있는 정보의 양을 의미합니다. 현재 모델들은 수만 개에서 200만 개 이상의 토큰을 처리합니다.
+
+사실상, 이러한 매개변수들은 거대한 룩업 테이블을 형성합니다. 컨텍스트 윈도우 범위 내의 모든 토큰 시퀀스에 대해 모델은 어휘 내 각 토큰이 다음에 올 가능성을 할당하는 확률 벡터를 생성합니다. 이것이 모델의 단 하나의 기능입니다: 주어진 컨텍스트에 대해 다음 토큰을 예측하는 것입니다.
+
+수십억 개의 매개변수들은 훈련 데이터에서 학습한 패턴들을 인코딩합니다. 이러한 패턴들은 기본적인 문법 규칙부터 복잡한 추론 전략, 사실적 지식, 그리고 스타일 선호도에 이르기까지 모든 것을 포착합니다. 이것들이 전체적으로 모델의 능력과 한계를 정의합니다.
+
+:::note 형식화
+TLA+(시간 논리의 행동)와 같은 형식주의를 사용하여 모델을 다음과 같이 형식화할 수 있습니다:
+
+```tla
+# 대규모 언어 모델의 어휘
+TOKENS == { ... }
+
+# 컨텍스트 윈도우 길이
+LENGTH == 1000000
+
+# 모델은 각 토큰 시퀀스를 토큰별 확률로 매핑
+MODELS ==
+  [ { s ∈ Seq(TOKENS) : Len(s) ≤ LENGTH } → [TOKENS → [0.0 .. 1.0]] ]
+```
+:::
+
+모델들은 훈련 시 필요한 방대한 자원과 추론 시 보여주는 능력을 통해 충격을 주고 경외심을 자아냅니다.
+
+### 1.1.3 훈련
+
+훈련은 데이터셋을 기반으로 모델, 더 구체적으로는 모델의 매개변수를 생성하거나 업데이트하는 기능입니다 (리스팅 1.3 참조).
+
+```typescript
+// Variable to represent the init, empty, or scratch model
+const init: Model = [];
+
+// Abstract function to represent training
+function train(model: Model, dataset: Set<Token[]>): Model
+```
+
+<div className="listing-description">
+  리스팅 1.3: 추상적 훈련 함수 시그니처
+</div>
+
+훈련에는 두 가지 변형이 있습니다:
+
+1. **스크래치 모델로부터의 훈련**: 빈 모델에서 시작하여 모델의 매개변수를 학습합니다. 많은 훈련 데이터, 컴퓨팅 리소스, 시간이 필요합니다.
+
+2. **베이스 모델로부터의 훈련(미세 조정)**: 베이스 모델에서 시작하여 모델의 매개변수를 학습합니다. 더 적은 훈련 데이터, 컴퓨팅 리소스, 시간이 필요합니다.
+
+:::info 모델링 선택
+
+모델 생성과 업데이트를 두 가지 다른 함수로 모델링할 수 있습니다. 하지만 둘 다를 하나의 함수로 표현하면 인지적 부담을 줄이고 스크래치 모델에 뿌리를 둔 모델들 사이의 관계를 설정할 수 있습니다 (그림 1.5 참조).
+
+:::
+
+<br />
+
+![Figure 1.5](/img/chapter1/figure1.5.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  그림 1.5: 모든 모델이 훈련을 통해 초기 스크래치 모델에서 파생되는 방법을 보여주는 모델 관계
+</div>
+
+<br />
+
+:::note 형식화
+훈련을 모델 공간에서 비결정적으로 모델을 선택하는 것으로 생각할 수 있습니다. 여기서 비결정적 선택은 모든 훈련 메커니즘에서 완전히 추상화됩니다.
+
+```tla
+# 모델 공간에서 비결정적으로 모델을 선택하여 훈련을 추상화
+train(dataset) ==
+  CHOOSE model ∈ MODELS : TRUE
+```
+:::
+
+상당한 리소스 요구사항으로 인해, 스크래치에서의 훈련은 AI 래보량토리만 가능한 반면, 미세 조정은 많은 팀에서 가능합니다.
+
+### 1.1.4 추론
+
+추론은 모델을 토큰 시퀀스에 적용하여 다음 토큰을 생성하는 기능입니다 (리스팅 1.4 참조).
+
+```typescript
+function infer(model : Model, context : Token[]) : Token
+```
+
+<div className="listing-description">
+  리스팅 1.4: 추상적 추론 함수 시그니처
+</div>
+
+모델은 결정론적 수학 함수입니다: 동일한 입력이 주어지면 항상 동일한 확률 분포를 생성합니다. 하지만 항상 최고 확률 토큰을 선택하는 대신, 추론은 top-k 샘플링과 같은 전략을 사용하여 확률 분포에서 샘플링합니다. 이러한 제어된 무작위성은 출력을 다양하고 창의적으로 보이게 만듭니다. 예를 들어, "프랑스의 수도는"이라는 프롬프트가 주어지면, 추론은 (반복적으로) "파리"나 "파리 시"를 생성할 수 있습니다.
+
+:::info 제어된 무작위성
+샘플링은 진정한 무작위가 아닙니다. 샘플링은 시드 값으로 인스턴스화된 의사 무작위 수 생성기에 의존합니다. 동일한 시드와 동일한 컨텍스트가 주어지면 추론은 매번 동일한 결과를 생성합니다. 하지만 이 시드 매개변수는 종종 API 인터페이스에서 노출되지 않으므로, 기본적으로 추론을 무작위적인 것으로 생각해야 합니다.
+:::
+
+:::note 형식화
+infer는 상위 k개 토큰, 즉 가장 높은 확률을 가진 상위 토큰들을 선택하고 비결정적 선택을 수행합니다
+
+```tla
+# 컨텍스트가 주어졌을 때 가장 가능성이 높은 10개 토큰 중에서
+# 비결정적으로 다음 토큰을 선택하여 추론을 추상화
+Infer(model, context) ==
+  CHOOSE token ∈ TOPK(model[context], 10)
+```
+:::
+
+## 1.2 모델과 AI API
+
+토큰, 모델, 훈련, 추론이라는 기본 구성 요소들이 결합하여 실용적인 AI API를 만듭니다. 추론을 반복하여 한 번에 하나의 토큰을 예측함으로써, 우리는 확률 분포를 일관성 있는 텍스트로 변환합니다. 서로 다른 훈련 접근법은 서로 다른 API 기능을 제공합니다. 우리는 세 가지 다른 유형의 모델을 살펴볼 것입니다:
+
+- 완성 모델(베이스 모델이라고도 함)
+- 대화 모델(채팅 모델이라고도 함)
+- 도구 호출 모델
+
+<br />
+
+![Figure 1.6](/img/chapter1/figure1.6.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  그림 1.6: 모델 유형과 훈련/미세 조정 관계
+</div>
+
+### 1.2.1 완성 모델
+
+완성 모델은 텍스트를 완성하도록 훈련됩니다. 훈련 데이터는 특별한 경계 마커로 둘러싸인 토큰 시퀀스로 구성됩니다:
+
+- **BOS**—시퀀스 시작(Beginning of Sequence). 토큰 시퀀스의 시작을 표시합니다.
+- **EOS**—시퀀스 끝(End of Sequence). 토큰 시퀀스의 끝을 표시합니다.
+
+BOS와 EOS는 훈련의 중요한 구성 요소이며, 모델이 시퀀스의 시작과 끝을 인코딩할 수 있게 해줍니다. 이를 통해 모델은 무한정 계속하는 대신 완전하고 경계가 있는 응답을 생성하는 방법을 학습합니다.
+
+```
+<BOS>
+  The capital of France is Paris.
+<EOS>
+```
+
+완성 모델은 중지 토큰에 도달할 때까지 다음 토큰을 반복적으로 생성하여 텍스트를 완성합니다 (리스팅 1.5 참조)
+
+```typescript
+
+// Assumes global tokenizer with BOS and EOS special tokens
+
+function generate(model: Model, promptTokens: Token[]): Token[] {
+  const answerTokens: Token[] = [];
+
+  while (true) {
+    const next = infer(model, [
+      tokenizer.BOS,
+      ...promptTokens,
+      ...answerTokens
+    ]);
+    if (next == tokenizer.EOS) {
+      break;
+    }
+    answerTokens.push(next);
+  }
+
+  return answerTokens;
+}
+
+function complete(model: Model, prompt: string): string {
+  const promptTokens: Token[] = tokenizer.encode(prompt);
+  const answerTokens: Token[] = generate(model, promptTokens);
+  return tokenizer.decode(answerTokens);
+}
+```
+
+<div className="listing-description">
+  리스팅 1.5: 베이스 모델을 위한 토큰 생성 및 텍스트 완성 함수
+</div>
+
+이 유형의 모델과 그 생성 API를 문장 완성 기계로 생각할 수 있습니다: 프롬프트가 주어지면 API는 프롬프트의 완성을 생성합니다.
+
+```
+prompt: The capital of France
+answer: is Paris
+```
+
+완성 모델은 최초로 사용할 수 있었던 LLM입니다. 오늘날의 대화 및 도구 호출 모델에 비해 제한적이지만, 개념적 기초를 제공합니다: 모든 상호작용은 여전히 반복적인 토큰 예측으로 귀결됩니다.
+
+### 1.2.2 대화 모델
+
+대화 모델은 지시사항을 따르면서 대화를 완성하도록 미세 조정된 완성 모델입니다. 훈련 데이터에는 시스템 지시사항과 참여자를 구분하는 역할 마커가 추가됩니다:
+
+```
+<BOS>
+  <|BOT role=system|>
+    You are a helpful assistant.
+  <|EOT|>
+  <|BOT role=user|>
+    What is the capital of France?
+  <|EOT|>
+  <|BOT role=assistant|>
+    The capital of France is Paris.
+  <|EOT|>
+<EOS>
+```
+
+역할 마커는 중요한 진전을 나타냅니다: 구조화된 프로토콜의 출현입니다. 모델은 단순히 텍스트를 완성하는 것뿐만 아니라 다중 턴 대화에 참여하고, 화자 간의 컨텍스트를 유지하며 시스템 수준의 지시사항을 따르는 방법을 학습합니다.
+
+완성 모델과 마찬가지로, 대화 모델은 중지 토큰에 도달할 때까지 토큰을 반복적으로 생성합니다 (리스팅 1.6 참조):
+
+```typescript
+type Turn = {
+  role: "SYSTEM" | "USER" | "ASSISTANT"
+  text: string
+}
+
+function converse(model : Model, prompt: Turn[]) : Turn {
+  const promptTokens: Token[] = prompt.flatMap(turn => [
+    tokenizer.BOT(turn.role),
+    ...tokenizer.encode(turn.text),
+    tokenizer.EOT()
+  ]);
+
+  const answerTokens: Token[] = generate(model, promptTokens)
+
+  // Parses response text to extract assistant's turn
+  return Turn.parse(tokenizer.decode(answerTokens))
+}
+```
+
+<div className="listing-description">
+  리스팅 1.6: 역할 기반 턴이 있는 채팅 모델을 위한 대화 함수
+</div>
+
+이 유형의 모델과 그 생성 API를 대화용 완성 기계로 생각할 수 있습니다: 프롬프트가 주어지면 API는 답변의 완성을 생성합니다.
+
+```
+prompt: What is the capital of France?
+answer: The capital of France is Paris.
+```
+
+대화 모델은 사용자와 상호작용할 수 있지만, 환경과는 상호작용할 수 없습니다. 도구 호출 모델이 이 격차를 해소합니다.
+
+### 1.2.3 도구 호출 모델
+
+도구 호출 모델은 대화 모델을 외부 함수를 호출할 수 있는 기능으로 확장합니다. 훈련 데이터에는 시스템 프롬프트의 도구 정의와 도구 응답을 위한 새로운 역할이 포함됩니다:
+
+```
+<BOS>
+  <|BOT role=system|>
+    You are a helpful assistant. You may call tools:
+      - getWeather(location: string): returns current weather.
+  <|EOT|>
+  <|BOT role=user|>
+    How's the weather in Paris?
+  <|EOT|>
+  <|BOT role=assistant|>
+    tool:getWeather("Paris")
+  <|EOT|>
+  <|BOT role=tool|>
+    28C sunny
+  <|EOT|>
+  <|BOT role=assistant|>
+    The current weather in Paris is 28C and sunny.
+  <|EOT|>
+<EOS>
+```
+
+모델은 외부 정보나 작업이 필요한 시점을 인식하고 구조화된 도구 호출을 생성하는 방법을 학습합니다. 하지만 모델은 도구를 직접 실행하지 않습니다—호출자가 실행해야 하는 지시사항을 생성하고, 다음 상호작용에서 결과를 모델에 반환합니다.
+
+이 유형의 모델과 그 생성 API를 관찰하거나 작업을 트리거하는 도구에 접근할 수 있는 대화용 완성 기계로 생각할 수 있습니다:
+
+```
+prompt: How's the weather in Paris?
+answer: tool:getWeather("Paris").
+prompt: 28C sunny
+answer: The current weather in Paris is 28C and sunny.
+```
+
+도구 호출 모델은 응답을 생성하고 함수를 호출할 수 있지만, 본질적으로 생성적이며 각 입력에 대해 하나의 출력을 생성합니다.
+
+## 1.3 AI 에이전트
+
+에이전트는 생성에 오케스트레이션과 상태 관리를 추가합니다: 상태가 없는 단일 턴 AI API와 달리, 에이전트는 목표를 지속적으로 추구할 수 있는 상태가 있는 다중 턴 구성 요소입니다.
+
+### 1.3.1 에이전트
+
+에이전트 A를 모델 M, 도구 집합 T, 시스템 프롬프트 s의 튜플로 정의합니다:
+
+```
+A = (M, T, s)
+```
+
+식별자 i를 가진 에이전트 인스턴스 Ai(세션 또는 대화라고도 함)를 모델 M, 도구 T, 시스템 프롬프트 s, 히스토리 h의 튜플로 정의합니다:
+
+```
+Ai = (M, T, s, h)
+```
+
+히스토리 h는 추상적인 에이전트 정의를 에이전트 인스턴스 또는 실행으로 변환합니다. 히스토리는 교환의 시퀀스로 구조화됩니다:
+
+```
+h = [(u₁, a₁), (u₂, a₂), (u₃, a₃), (u₄, a₄), ...]
+```
+
+여기서 u는 사용자 메시지를, a는 에이전트 응답을 나타냅니다.
+
+도구 호출이 포함되면, 히스토리는 도구 호출(t)과 그 결과(r)를 포함하도록 확장됩니다:
+
+```
+h = [(u₁, a₁), (u₂, t₁), (r₁, a₂), (u₃, a₃), ...]
+```
+
+### 1.3.2 에이전트 루프
+
+AI 에이전트는 대화 상태를 관리하면서 AI API, 사용자, 도구 간의 조정을 수행하는 중앙 오케스트레이션 루프를 중심으로 구조화됩니다. 이 에이전트 루프는 에이전틱 애플리케이션의 주요 엔지니어링 과제를 나타냅니다. 루프는 상태 관리, 비동기 장기 실행 작업 조정, 실패 시 복구 처리를 담당합니다.
+
+## 1.4 에이전틱 애플리케이션
+
+에이전틱 애플리케이션은 단일 에이전트 시스템부터 에이전트들이 다른 에이전트들과 조정하는 다중 에이전트 시스템까지 다양합니다. 다중 에이전트 시스템에서 에이전트는 다른 에이전트를 호출하여 동적 호출 그래프를 생성할 수 있습니다 (그림 1.7 참조).
+
+<br />
+
+![Figure 1.7](/img/chapter1/figure1.7.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  그림 1.7: 다중 에이전트 시스템은 에이전트가 다른 에이전트와 도구를 호출하는 동적 호출 그래프를 형성합니다
+</div>
+
+<br />
+
+## 1.5 첫 만남
+
+기초를 확립했으니, 실제 AI API와 상호작용해 봅시다. 주로 OpenAI를 예제로 사용하지만, 패턴은 다른 제공업체에도 적용됩니다.
+
+### 1.5.1 기본 API
+
+리스팅 1.7은 API와의 가장 기본적인 상호작용을 보여줍니다. 원하는 모델, 컨텍스트(즉, 대화의 히스토리와 현재 프롬프트)를 제공하고 완성을 요청합니다.
+
+```typescript
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+async function main() {
+  const completion = await openai.chat.completions.create({
+    model: "gpt-5",
+    messages: [{
+      role: "user", content: "What is the capital of France?"
+    }]
+  });
+
+  console.log(completion);
+}
+
+main();
+```
+
+<div className="listing-description">
+  리스팅 1.7: 기본 OpenAI API 상호작용
+</div>
+
+API는 구조화된 응답을 반환합니다 (리스팅 1.8):
+
+```json {10}
+{
+  "id": "chatcmpl-C5rNhjKYS8nYoXdnZmTjK5T2FEsVX",
+  "object": "chat.completion",
+  "model": "gpt-5-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Paris.",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "total_tokens": 23,
+    "prompt_tokens": 12,
+    "completion_tokens": 11
+  }
+}
+```
+
+<div className="listing-description">
+  리스팅 1.8: 어시스턴트의 응답
+</div>
+
+하지만 이 책에서는 대부분 AI의 답변에만 관심이 있습니다 (리스팅 1.9)
+
+```typescript
+const answer : string? = completion.choices[0]?.message?.content;
+```
+
+<div className="listing-description">
+  리스팅 1.9: 어시스턴트의 응답 콘텐츠 추출
+</div>
+
+### 1.5.2 스트리밍 API
+
+많은 AI API는 두 가지 작동 모드를 제공합니다: 배치(응답을 한 번에 반환)와 스트리밍(토큰별로 점진적으로 응답을 반환). 스트리밍 모드는 사용자 경험을 개선할 잠재력이 있습니다: 기다리는 대신 사용자가 실시간으로 응답이 형성되는 것을 보며, 자연스럽고 대화적인 느낌을 만들고 인지된 지연 시간을 줄입니다 (리스팅 1.10 참조).
+
+```typescript
+import OpenAI from "openai";
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+async function main() {
+  const stream = await openai.chat.completions.create({
+    model: "gpt-4",
+    messages: [{
+      role: "user", content: "Tell me about Paris"
+    }],
+    stream: true,
+  });
+
+  let answer = "";
+
+  for await (const chunk of stream) {
+    const content = chunk.choices?.[0]?.delta?.content;
+    if (content) {
+      process.stdout.write(content);
+      answer += content;
+    }
+  }
+
+}
+
+main();
+```
+
+<div className="listing-description">
+  리스팅 1.10: 실시간 토큰별 응답을 위한 스트리밍 API
+</div>
+
+스트리밍에는 과제가 따릅니다:
+
+- **임시 vs 지속** 스트리밍은 아키텍처 복잡성을 도입합니다. 토큰이 표시를 위해 점진적으로 도착하는 동안, 애플리케이션은 대화 히스토리를 업데이트하고 종속 작업을 트리거하기 위해 완전한 응답이 필요합니다. 임시 스트림과 지속적인 결과를 모두 처리해야 하는 이중 요구사항은 시스템 설계를 복잡하게 만들며, 특히 서로 다른 구성 요소가 동일한 응답에 대해 서로 다른 뷰를 필요로 할 때 더욱 그렇습니다.
+
+### 1.5.3 도구 호출
+
+도구 호출은 대화 모델을 외부 함수를 호출할 수 있는 능력으로 확장하여, AI가 구조화된 함수 호출을 통해 텍스트 생성을 넘어선 세계와 상호작용할 수 있게 합니다 (리스팅 1.11 참조).
+
+```typescript
+import OpenAI from "openai";
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+const tools = [
+  {
+    type: "function",
+    function: {
+      name: "get_current_weather",
+      description: "Get the current weather in a given location",
+      parameters: {
+        type: "object",
+        properties: {
+          location: {
+            type: "string",
+            description:
+              "The city, state, and country, e.g. Berlin, Germany or San Francisco, CA, USA",
+          },
+        },
+        required: ["location"],
+      },
+    },
+  },
+];
+
+async function main() {
+  const completion = await openai.chat.completions.create({
+    model: "gpt-5",
+    messages: [
+      {
+        role: "user",
+        content: "What is the weather in Paris right now",
+      },
+    ],
+    tools: tools,
+  });
+
+  console.log(JSON.stringify(completion));
+}
+
+main();
+
+```
+
+<div className="listing-description">
+  리스팅 1.11: 도구 호출 API
+</div>
+
+API는 도구 호출이 포함된 응답을 반환합니다 (리스팅 1.12):
+
+```json
+{
+  "id": "chatcmpl-C76JQRfuc9HXpErPldbVyRuieZ8Lm",
+  "object": "chat.completion",
+  "created": 1755808596,
+  "model": "gpt-5-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          {
+            "id": "call_hQF9XaYtq8ZO6LJl6S3WctoU",
+            "type": "function",
+            "function": {
+              "name": "get_current_weather",
+              "arguments": "{\"location\":\"Paris, France\"}"
+            }
+          }
+        ],
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "tool_calls"
+    }
+  ],
+}
+```
+
+<div className="listing-description">
+  리스팅 1.12: 어시스턴트의 응답
+</div>
+
+도구 호출에는 과제가 따릅니다:
+
+- **API는 도구를 직접 실행하지 않습니다.** 대신 API는 의도된 호출의 구조화된 표현을 반환합니다. 호출 애플리케이션이 도구를 실행하고 결과를 반환해야 합니다.
+
+- **도구 호출은 블로킹 의존성을 생성합니다.** 다음 턴에서 도구 결과가 제공될 때까지 대화가 진행될 수 없습니다. 이 단계를 놓치면 예외가 발생합니다.
+
+이 패턴은 애플리케이션이 도구 실행, 조정, 실패 처리를 담당하게 하여 텍스트 생성 관리 이상의 상당한 복잡성을 추가합니다.
+
+### 1.5.4 간단한 에이전트
+
+리스팅 1.13은 AI API에서 AI 에이전트로의 전환을 보여줍니다. 이전 예제들이 각 API 호출이 독립적으로 존재하는 격리된 단일 턴 상호작용을 보여준 반면, 이 구현은 AI API를 지속적인 루프로 감싸는 것이 어떻게 대화형 에이전트로 변환하는지를 보여줍니다. 핵심 통찰은 메모리입니다—상호작용 간 대화 히스토리를 유지함으로써, 상태가 없는 API 호출을 상태가 있는 대화로 변환합니다.
+
+```typescript {15-17}
+import OpenAI from "openai";
+// peripherals.ts provides simple console I/O utilities
+import { getUserInput, closeUserInput } from "./peripherals";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+async function main() {
+  const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [{
+    role: "system", content: "End your final answer with <EXIT>.",
+  }];
+
+  while (true) {
+    let prompt = await getUserInput(
+      "User (type 'exit' to quit):",
+    );
+
+    if (prompt.toLowerCase() === "exit") {
+      break;
+    }
+
+    messages.push({role: "user", content: prompt});
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: messages
+    });
+
+    const answer = completion.choices[0]?.message?.content;
+
+    messages.push({role: "assistant", content: answer});
+
+    console.log("Assistant:", answer);
+
+    if (answer.includes("<EXIT>")) {
+      break;
+    }
+  }
+
+  closeUserInput();
+}
+
+main();
+```
+
+<div className="listing-description">
+  리스팅 1.13: 루프 기반 상호작용을 가진 간단한 대화형 에이전트
+</div>
+
+이 최소한의 구현은 모든 AI 에이전트의 기반이 되는 필수 아키텍처를 보여줍니다. 모든 에이전트는 기본적인 관심사를 해결해야 합니다:
+
+- **상태 관리**: 상호작용 간 대화 히스토리 유지. 여기서 `messages` 배열은 대화를 축적하여 상태가 없는 API 호출을 상태가 있는 대화로 변환합니다.
+
+- **신원 관리**: 에이전트의 고유한 신원 유지. 여기서 신원 관리는 실행 중인 프로세스에 의존하는 것으로만 구성됩니다.
+
+- **생명주기 관리**: 초기화, 실행, 중단, 재개, 종료 처리. 여기서 생명주기 관리는 기본적인 종료 조건(사용자 "exit", AI `<EXIT>`)으로만 구성됩니다.
+
+간단한 에이전트가 올바르게 작동하지만, 규모가 커질 때 중요해지는 근본적인 과제를 드러냅니다. 에이전트는 대부분의 시간을 유휴 상태로 보내며, `getUserInput()`에서 블로킹됩니다. 더 중요하게는, 프로세스와 에이전트 간의 이러한 긴밀한 결합이 취약성을 만듭니다—프로세스가 충돌하거나 종료되거나 재시작이 필요하면, 전체 에이전트 인스턴스가 모든 대화 컨텍스트와 함께 사라집니다.
+
+### 1.5.5 지속성 에이전트를 향해
+
+간단한 에이전트 아키텍처의 근본적인 결함은 에이전트 인스턴스를 프로세스 인스턴스에 바인딩하는 것입니다. 이러한 결합은 운영 시스템에서 극복할 수 없는 문제를 만듭니다:
+
+**신원과 상태 위기**: 에이전트의 신원과 메모리는 에이전트를 실행하는 기판을 초월해야 합니다. 시스템 재시작이나 충돌이 에이전트의 신원과 축적된 지식을 제거한다면, 그 에이전트는 의미 있는 장기적 참여에 적합하지 않습니다.
+
+**운영상 불가능**: 장기 실행 프로세스는 현대 운영 관행과 공존할 수 없습니다. 클라우드 플랫폼은 가상 머신을 재활용하고, 컨테이너를 재시작하며, 사용하지 않을 때 서버리스 프로세스를 종료합니다. 이러한 일상적인 운영에서 생존할 수 없는 에이전트는 운영상 실행 불가능합니다. 상태를 체크포인트하고, 실행을 중단하고, 다른 프로세스로 마이그레이션하고, 원활하게 재개할 수 있는 에이전트가 필요합니다.
+
+핵심 통찰은 에이전트 인스턴스가 휴대 가능해야 하며, 사용자, 도구 또는 다른 에이전트와의 신원, 상태, 진행 중인 상호작용을 보존하면서 프로세스와 머신 간에 이동할 수 있어야 한다는 것입니다. 이는 에이전트의 논리적 존재와 물리적 존재 사이의 근본적인 아키텍처 분리를 필요로 합니다.
+
+리스팅 1.14는 파일 기반 지속성을 통해 이러한 문제를 해결하려는 조잡한 시도를 나타냅니다:
+
+```typescript
+import OpenAI from "openai";
+import fs from "fs/promises";
+import path from "path";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const SYSTEM = "End your final answer with the symbol <EXIT>.";
+
+interface ConversationData {
+  messages: OpenAI.Chat.ChatCompletionMessageParam[];
+}
+
+async function loadConversation(
+  identifier: string,
+): Promise<OpenAI.Chat.ChatCompletionMessageParam[]> {
+  const filePath = path.join(process.cwd(), `${identifier}.json`);
+
+  try {
+    const data = await fs.readFile(filePath, "utf-8");
+    const conversation: ConversationData = JSON.parse(data);
+    return conversation.messages;
+  } catch (error) {
+    // File doesn't exist, return new conversation with system message
+    return [
+      {
+        role: "system",
+        content: SYSTEM,
+      },
+    ];
+  }
+}
+
+async function saveConversation(
+  identifier: string,
+  messages: OpenAI.Chat.ChatCompletionMessageParam[],
+): Promise<void> {
+  const filePath = path.join(process.cwd(), `${identifier}.json`);
+  const conversation: ConversationData = { messages };
+  await fs.writeFile(filePath, JSON.stringify(conversation, null, 2));
+}
+
+async function main() {
+  // Parse command line arguments
+  const args = process.argv.slice(2);
+
+  if (args.length < 2) {
+    console.error("Usage: ts-node index-4.ts <identifier> <prompt>");
+    process.exit(1);
+  }
+
+  const identifier = args[0];
+  const prompt = args.slice(1).join(" ");
+
+  try {
+    // Load existing conversation or create new one
+    const messages = await loadConversation(identifier);
+
+    // Add user message
+    messages.push({role: "user", content: prompt});
+
+    // Get completion from OpenAI
+    const completion = await openai.chat.completions.create({
+      model: "gpt-5",
+      messages: messages
+    });
+
+    const answer = completion.choices[0]?.message?.content;
+
+    if (answer) {
+      // Add assistant response
+      messages.push({role: "assistant", content: answer});
+
+      // Save conversation
+      await saveConversation(identifier, messages);
+
+      // Output the response
+      console.log("Assistant:", answer);
+    } else {
+      console.error("No response from OpenAI");
+    }
+  } catch (error) {
+    console.error("An error occurred:", error);
+    process.exit(1);
+  }
+}
+
+// Run the main function
+main();
+```
+
+<div className="listing-description">
+  리스팅 1.14: 파일 저장소를 사용한 지속적인 대화 상태
+</div>
+
+이 단순한 구현은 왜 에이전트 시스템이 신원 관리, 상태 지속성, 프로세스 오케스트레이션을 위한 정교한 인프라를 필요로 하는지를 강조합니다—이는 운영 준비가 완료된 에이전틱 애플리케이션을 구축하기 위해 해결해야 하는 기본적인 과제들입니다.
+
+## 1.6 요약
+
+- 토큰은 텍스트 조각에 대한 숫자 식별자입니다.
+- 토큰화기는 토큰과 텍스트 조각 간의 양방향 매핑을 유지합니다.
+- 모델은 주어진 컨텍스트에서 토큰에 확률을 할당하는 순서가 있는 매개변수 집합입니다.
+- 모델은 매개변수 수(정보 저장 용량)와 컨텍스트 윈도우(정보 처리 용량)로 특징지어집니다.
+- 훈련은 스크래치부터 시작하거나 미세 조정을 통해 데이터셋에서 모델 매개변수를 생성하거나 업데이트합니다.
+- 추론은 모델을 적용하여 다음 토큰을 예측하며, 다양한 출력을 위해 제어된 무작위성을 사용합니다.
+- 완성 모델은 프롬프트에서 텍스트 연속을 생성합니다.
+- 대화 모델은 다중 턴 대화를 유지하기 위해 역할 기반 구조를 추가합니다.
+- 도구 호출 모델은 구조화된 함수 호출을 생성하지만 직접 실행하지는 않습니다.
+- 에이전트는 모델, 도구, 시스템 프롬프트를 지속적인 상태 관리와 결합합니다.
+- 에이전트 인스턴스는 상태가 없는 API를 상태가 있는 시스템으로 변환하기 위해 대화 히스토리를 유지합니다.
+- 운영용 에이전트 구축에는 신원 관리, 상태 지속성, 프로세스 오케스트레이션을 위한 정교한 인프라가 필요합니다.

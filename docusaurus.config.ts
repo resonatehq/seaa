@@ -4,7 +4,7 @@ import type * as Preset from "@docusaurus/preset-classic";
 const config: Config = {
   title: "Systems Eningeering for Agentic Applications",
   tagline: "",
-  favicon: "img/async-rpc-logo.png",
+  favicon: "img/logo.svg",
 
   // Set the production url of your site here
   url: "https://seaa.resonatehq.io",
@@ -25,7 +25,33 @@ const config: Config = {
   // may want to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: "en",
-    locales: ["en"],
+    locales: ["en", "es", "ru", "ko"],
+    localeConfigs: {
+      en: {
+        label: "English",
+        direction: "ltr",
+        htmlLang: "en-US",
+        calendar: "gregory",
+      },
+      es: {
+        label: "Español",
+        direction: "ltr",
+        htmlLang: "es-ES",
+        calendar: "gregory",
+      },
+      ru: {
+        label: "Русский",
+        direction: "ltr",
+        htmlLang: "ru-RU",
+        calendar: "gregory",
+      },
+      ko: {
+        label: "한국어",
+        direction: "ltr",
+        htmlLang: "ko-KR",
+        calendar: "gregory",
+      },
+    },
   },
 
   presets: [
@@ -92,7 +118,7 @@ const config: Config = {
       title: "Systems Engineering for Agentic Applications",
       logo: {
         alt: "SEAA logo",
-        src: "img/async-rpc-logo.png",
+        src: "img/logo.svg",
         href: "/",
         target: "_self",
       },
