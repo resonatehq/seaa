@@ -2,7 +2,7 @@ import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
 
 const config: Config = {
-  title: "Systems Eningeering for Agentic Applications",
+  title: "Systems Engineering for Agentic Applications",
   tagline: "",
   favicon: "img/logo.svg",
 
@@ -124,8 +124,8 @@ const config: Config = {
       },
       items: [
         {
-          type: 'localeDropdown',
-          position: 'right',
+          type: "localeDropdown",
+          position: "right",
         },
         {
           href: "https://resonatehq.io/discord",
