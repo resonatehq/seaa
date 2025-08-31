@@ -124,6 +124,10 @@ const config: Config = {
       },
       items: [
         {
+          type: 'localeDropdown',
+          position: 'right',
+        },
+        {
           href: "https://resonatehq.io/discord",
           html: '<i class="bx bx-md bxl-discord"></i>',
           position: "right",
