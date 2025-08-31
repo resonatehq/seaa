@@ -1,0 +1,847 @@
+---
+id: chapter-1
+title: 1. AI에서 에이전틱 애플리케이션으로
+sidebar_label: Chapter 1
+last_update:
+  date: "09-01-2025"
+---
+
+### 이 챕터에서 다루는 내용
+- AI 기초
+- AI 에이전트와 에이전틱 애플리케이션
+- AI API와 AI 에이전트와의 첫 만남
+
+# AI에서 에이전틱 애플리케이션으로
+
+모든 애플리케이션이 에이전틱 애플리케이션이 될 것입니다. IDE나 터미널에서 로컬로 실행되는 코딩 에이전트부터 분산 환경에서 작업을 조율하는 엔터프라이즈 에이전트까지, 에이전틱 애플리케이션은 목표를 추구하며 자율적이고 지속적으로 운영되는 애플리케이션입니다 (그림 1.1).
+
+<br />
+
+![Figure 1.1](/img/chapter1/figure1.1.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  그림 1.1: 에이전틱 애플리케이션은 목표를 추구하며 자율적이고 지속적으로 행동합니다
+</div>
+
+<br />
+
+에이전틱 애플리케이션은 AI 에이전트로 구성되고, AI 에이전트는 AI API로 구성됩니다. 이러한 시스템을 효과적으로 엔지니어링하려면 하위에서 상위로 구조와 동작을 이해해야 합니다. 이 챕터에서는 토큰, 모델, 훈련, 추론이 상위 레벨에서 일어나는 일을 어떻게 제약하는지 이해하기 위해 하위 레벨부터 시작합니다.
+
+## 1.1 AI 기초
+
+전통적인 애플리케이션을 에이전틱 애플리케이션으로 변환하는 것은 대규모 언어 모델(LLM)에 의해 구동됩니다. 좁고 도메인별로 특화된 이전 AI 기술과 달리, LLM은 광범위하고 범용적이며, 목표에 대해 추론하고 복잡한 작업을 조율할 수 있습니다. 따라서 이 책 전반에서 AI API, 에이전트, 에이전틱 앱의 세계를 주로 LLM의 관점에서 살펴볼 것입니다.
+
+:::info 개념적 프레임워크
+다양한 AI 제공업체의 구체적인 예제를 사용하지만, 시스템 전반에 공통되는 본질적 동작을 포착하는 개념적 프레임워크를 구축하는 데 중점을 둡니다. 세부 메커니즘은 다를 수 있지만, 상위 수준의 패턴은 일관되게 유지되며 에이전틱 애플리케이션을 엔지니어링하기 위한 신뢰할 수 있는 기반을 제공합니다
+:::
+
+LLM은 네 가지 기본 구성 요소로 구성됩니다: 토큰, 모델, 훈련, 추론 (그림 1.2 참조).
+
+<br />
+
+![Figure 1.2](/img/chapter1/figure1.2.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  그림 1.2: 토큰, 모델, 훈련, 추론 사이의 관계를 보여주는 대규모 언어 파이프라인
+</div>
+
+<br />
+
+시스템 엔지니어는 이러한 저수준 구성 요소를 직접 구현하지는 않지만, 이러한 기초를 개념적 수준에서라도 이해하는 것은 안정적이고 확장 가능한 에이전틱 애플리케이션을 구축하는 데 필수적입니다.
+
+### 1.1.1 토큰
+
+LLM은 텍스트로 작동합니다: 텍스트로 훈련되고, 텍스트를 입력으로 받으며, 텍스트를 출력으로 반환합니다. 하지만 LLM은 인간과 다르게 텍스트를 처리합니다. 인간은 텍스트를 문자나 단어로 구분합니다 (그림 1.3 참조).
+
+<br />
+
+![Figure 1.3](/img/chapter1/figure1.3.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  그림 1.3: 인간이 인간을 위해 문자나 단어로 구분한 텍스트.
+</div>
+
+<br />
+
+LLM은 대신 텍스트를 토큰으로 구분합니다. 즉, 텍스트 조각에 대한 숫자 식별자로 구분합니다 (그림 1.4 참조).
+
+<br />
+
+![Figure 1.4](/img/chapter1/figure1.4.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  그림 1.4: GPT-4o 토큰화기가 토큰으로 구분한 텍스트와 그 숫자 값들.
+</div>
+
+<br />
+
+서로 다른 토큰화기들은 텍스트 조각에 다른 숫자 값을 할당합니다. 우리의 목적에서는 토큰화를 필수적인 인터페이스로 추상화합니다 (리스팅 1.1 참조):
+
+```typescript
+// A Token is a numerical representation of a fragment of text
+type Token = number
+
+interface Tokenizer {
+  // Abstract function to represent the translation of text into tokens
+  function encode(String) : Token[]
+
+  // Abstract function to represent the translation of tokens into text
+  function decode(Token[]) : String
+}
+```
+
+<div className="listing-description">
+  리스팅 1.1: encode와 decode 함수를 가진 인터페이스로서 토큰화기의 추상적 표현
+</div>
+
+토큰화기는 토큰과 관련된 텍스트 조각 사이의 매핑을 유지합니다. 또한 ASCII나 Unicode의 개행 문자 같은 제어 문자와 유사한 특수 토큰이나 제어 토큰을 정의할 수 있습니다. 모든 토큰의 집합을 알파벳 또는 어휘라고도 합니다.
+
+### 1.1.2 모델
+
+모델은 AI의 공개적 얼굴입니다. OpenAI, Anthropic 및 기타 제공업체의 새로운 버전들은 큰 기대와 함께 출시되며, 광범위하게 논의되고 칭찬받거나 비판받습니다. 오늘날 버전 출시는 문화적 이벤트가 되었고, 데모는 바이럴하게 퍼지며, 놀라우거나 실망스러운 동작의 일화들이 빠르게 퍼집니다.
+
+과대 광고 아래에서, 모델은 놓라울 정도로 평범합니다: 순서가 있는 매개변수 집합입니다 (리스팅 1.2 참조).
+
+```typescript
+// Type to represent a model parameter
+type Param = number;
+
+// Type to represent a model
+type Model = Param[];
+
+// Context window length
+function length(model : Model) : number
+```
+
+<div className="listing-description">
+  리스팅 1.2: 매개변수 배열로서의 모델 표현
+</div>
+
+제공업체를 가리지 않고, LLM은 두 가지 속성으로 특징지어집니다:
+
+**매개변수 수**: 모델이 훈련 중에 학습할 수 있는 매개변수의 수. 이는 모델이 *전체적으로* 저장할 수 있는 정보의 양을 의미합니다. 현재 모델들은 수십억에서 수조 개의 매개변수를 가집니다.
+
+**컨텍스트 윈도우**: 모델이 추론 중에 처리할 수 있는 토큰의 수. 이는 모델이 *한 번에* 고려할 수 있는 정보의 양을 의미합니다. 현재 모델들은 수만 개에서 200만 개 이상의 토큰을 처리합니다.
+
+사실상, 이러한 매개변수들은 거대한 룩업 테이블을 형성합니다. 컨텍스트 윈도우 범위 내의 모든 토큰 시퀀스에 대해 모델은 어휘 내 각 토큰이 다음에 올 가능성을 할당하는 확률 벡터를 생성합니다. 이것이 모델의 단 하나의 기능입니다: 주어진 컨텍스트에 대해 다음 토큰을 예측하는 것입니다.
+
+수십억 개의 매개변수들은 훈련 데이터에서 학습한 패턴들을 인코딩합니다. 이러한 패턴들은 기본적인 문법 규칙부터 복잡한 추론 전략, 사실적 지식, 그리고 스타일 선호도에 이르기까지 모든 것을 포착합니다. 이것들이 전체적으로 모델의 능력과 한계를 정의합니다.
+
+:::note 형식화
+TLA+(시간 논리의 행동)와 같은 형식주의를 사용하여 모델을 다음과 같이 형식화할 수 있습니다:
+
+```tla
+# 대규모 언어 모델의 어휘
+TOKENS == { ... }
+
+# 컨텍스트 윈도우 길이
+LENGTH == 1000000
+
+# 모델은 각 토큰 시퀀스를 토큰별 확률로 매핑
+MODELS ==
+  [ { s ∈ Seq(TOKENS) : Len(s) ≤ LENGTH } → [TOKENS → [0.0 .. 1.0]] ]
+```
+:::
+
+모델들은 훈련 시 필요한 방대한 자원과 추론 시 보여주는 능력을 통해 충격을 주고 경외심을 자아냅니다.
+
+### 1.1.3 훈련
+
+훈련은 데이터셋을 기반으로 모델, 더 구체적으로는 모델의 매개변수를 생성하거나 업데이트하는 기능입니다 (리스팅 1.3 참조).
+
+```typescript
+// Variable to represent the init, empty, or scratch model
+const init: Model = [];
+
+// Abstract function to represent training
+function train(model: Model, dataset: Set<Token[]>): Model
+```
+
+<div className="listing-description">
+  리스팅 1.3: 추상적 훈련 함수 시그니처
+</div>
+
+훈련에는 두 가지 변형이 있습니다:
+
+1. **스크래치 모델로부터의 훈련**: 빈 모델에서 시작하여 모델의 매개변수를 학습합니다. 많은 훈련 데이터, 컴퓨팅 리소스, 시간이 필요합니다.
+
+2. **베이스 모델로부터의 훈련(미세 조정)**: 베이스 모델에서 시작하여 모델의 매개변수를 학습합니다. 더 적은 훈련 데이터, 컴퓨팅 리소스, 시간이 필요합니다.
+
+:::info 모델링 선택
+
+모델 생성과 업데이트를 두 가지 다른 함수로 모델링할 수 있습니다. 하지만 둘 다를 하나의 함수로 표현하면 인지적 부담을 줄이고 스크래치 모델에 뿌리를 둔 모델들 사이의 관계를 설정할 수 있습니다 (그림 1.5 참조).
+
+:::
+
+<br />
+
+![Figure 1.5](/img/chapter1/figure1.5.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  그림 1.5: 모든 모델이 훈련을 통해 초기 스크래치 모델에서 파생되는 방법을 보여주는 모델 관계
+</div>
+
+<br />
+
+:::note 형식화
+훈련을 모델 공간에서 비결정적으로 모델을 선택하는 것으로 생각할 수 있습니다. 여기서 비결정적 선택은 모든 훈련 메커니즘에서 완전히 추상화됩니다.
+
+```tla
+# 모델 공간에서 비결정적으로 모델을 선택하여 훈련을 추상화
+train(dataset) ==
+  CHOOSE model ∈ MODELS : TRUE
+```
+:::
+
+상당한 리소스 요구사항으로 인해, 스크래치에서의 훈련은 AI 래보량토리만 가능한 반면, 미세 조정은 많은 팀에서 가능합니다.
+
+### 1.1.4 추론
+
+추론은 모델을 토큰 시퀀스에 적용하여 다음 토큰을 생성하는 기능입니다 (리스팅 1.4 참조).
+
+```typescript
+function infer(model : Model, context : Token[]) : Token
+```
+
+<div className="listing-description">
+  리스팅 1.4: 추상적 추론 함수 시그니처
+</div>
+
+모델은 결정론적 수학 함수입니다: 동일한 입력이 주어지면 항상 동일한 확률 분포를 생성합니다. 하지만 항상 최고 확률 토큰을 선택하는 대신, 추론은 top-k 샘플링과 같은 전략을 사용하여 확률 분포에서 샘플링합니다. 이러한 제어된 무작위성은 출력을 다양하고 창의적으로 보이게 만듭니다. 예를 들어, "프랑스의 수도는"이라는 프롬프트가 주어지면, 추론은 (반복적으로) "파리"나 "파리 시"를 생성할 수 있습니다.
+
+:::info 제어된 무작위성
+샘플링은 진정한 무작위가 아닙니다. 샘플링은 시드 값으로 인스턴스화된 의사 무작위 수 생성기에 의존합니다. 동일한 시드와 동일한 컨텍스트가 주어지면 추론은 매번 동일한 결과를 생성합니다. 하지만 이 시드 매개변수는 종종 API 인터페이스에서 노출되지 않으므로, 기본적으로 추론을 무작위적인 것으로 생각해야 합니다.
+:::
+
+:::note Formalization
+infer selects the top-k tokens, that is, the top largest probability tokens and makes a non-deterministic choice
+
+```tla
+# We abstract over inference by non-deterministically choosing
+# a next token of the 10 most likely tokens given the context
+Infer(model, context) ==
+  CHOOSE token ∈ TOPK(model[context], 10)
+```
+:::
+
+## 1.2 모델과 AI API
+
+The foundational components, tokens, models, training, and inference, combine to create practical AI APIs. By iterating inference, predicting one token at a time, we transform probability distributions into coherent text. Different training approaches yield different API capabilities. We will look at three different types of models:
+
+- Completion models (also called base models)
+- Conversation models (also called chat models)
+- Tool-calling models
+
+<br />
+
+![Figure 1.6](/img/chapter1/figure1.6.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  Figure 1.6: Model types and their training/fine-tuning relationships
+</div>
+
+### 1.2.1 완성 모델
+
+Completion models are trained to complete text. Their training data consists of token sequences wrapped in special boundary markers:
+
+- **BOS**—시퀀스 시작(Beginning of Sequence). 토큰 시퀀스의 시작을 표시합니다.
+- **EOS**—시퀀스 끝(End of Sequence). 토큰 시퀀스의 끝을 표시합니다.
+
+BOS and EOS are important components of training and allow the model to encode the beginning and ending of sequences. This is how models learn to generate complete, bounded responses rather than continuing indefinitely.
+
+```
+<BOS>
+  The capital of France is Paris.
+<EOS>
+```
+
+Completion models complete text by iteratively generating the next token until we hit a stop token (see Listing 1.5)
+
+```typescript
+
+// Assumes global tokenizer with BOS and EOS special tokens
+
+function generate(model: Model, promptTokens: Token[]): Token[] {
+  const answerTokens: Token[] = [];
+
+  while (true) {
+    const next = infer(model, [
+      tokenizer.BOS,
+      ...promptTokens,
+      ...answerTokens
+    ]);
+    if (next == tokenizer.EOS) {
+      break;
+    }
+    answerTokens.push(next);
+  }
+
+  return answerTokens;
+}
+
+function complete(model: Model, prompt: string): string {
+  const promptTokens: Token[] = tokenizer.encode(prompt);
+  const answerTokens: Token[] = generate(model, promptTokens);
+  return tokenizer.decode(answerTokens);
+}
+```
+
+<div className="listing-description">
+  리스팅 1.5: 베이스 모델을 위한 토큰 생성 및 텍스트 완성 함수
+</div>
+
+You can think of this type of model and its generation API as a completion machine for sentences: given a prompt, the API generates a completion of the prompt.
+
+```
+prompt: The capital of France
+answer: is Paris
+```
+
+Completion models were the first available LLMs. While limited compared to today’s conversation and tool-calling models, they remain the conceptual foundation: every interaction still reduces to iterative token prediction.
+
+### 1.2.2 대화 모델
+
+Conversation models are completion models fine-tuned to complete a conversation while following instructions. Their training data adds role markers to distinguish between system instructions and participants:
+
+```
+<BOS>
+  <|BOT role=system|>
+    You are a helpful assistant.
+  <|EOT|>
+  <|BOT role=user|>
+    What is the capital of France?
+  <|EOT|>
+  <|BOT role=assistant|>
+    The capital of France is Paris.
+  <|EOT|>
+<EOS>
+```
+
+Role markers represent a crucial progression: the emergence of a structured protocol. The model learns not just to complete text, but to participate in a multi-turn conversation, maintaining context across speakers and following system-level instructions.
+
+Like completion models, conversation models generate tokens iteratively until we hit a stop token (see Listing 1.6):
+
+```typescript
+type Turn = {
+  role: "SYSTEM" | "USER" | "ASSISTANT"
+  text: string
+}
+
+function converse(model : Model, prompt: Turn[]) : Turn {
+  const promptTokens: Token[] = prompt.flatMap(turn => [
+    tokenizer.BOT(turn.role),
+    ...tokenizer.encode(turn.text),
+    tokenizer.EOT()
+  ]);
+
+  const answerTokens: Token[] = generate(model, promptTokens)
+
+  // Parses response text to extract assistant's turn
+  return Turn.parse(tokenizer.decode(answerTokens))
+}
+```
+
+<div className="listing-description">
+  리스팅 1.6: 역할 기반 턴이 있는 채팅 모델을 위한 대화 함수
+</div>
+
+You can think of this type of model and its generation API as a completion machine for conversations: given a prompt, the API generates a completion of the answer.
+
+```
+prompt: What is the capital of France?
+answer: The capital of France is Paris.
+```
+
+While conversation models can interact with users, they cannot interact with the environment. Tool-calling models bridge this gap.
+
+### 1.2.3 도구 호출 모델
+
+Tool-calling models extend conversation models with the ability to invoke external functions. Their training data includes tool definitions in the system prompt and a new role for tool responses:
+
+```
+<BOS>
+  <|BOT role=system|>
+    You are a helpful assistant. You may call tools:
+      - getWeather(location: string): returns current weather.
+  <|EOT|>
+  <|BOT role=user|>
+    How's the weather in Paris?
+  <|EOT|>
+  <|BOT role=assistant|>
+    tool:getWeather("Paris")
+  <|EOT|>
+  <|BOT role=tool|>
+    28C sunny
+  <|EOT|>
+  <|BOT role=assistant|>
+    The current weather in Paris is 28C and sunny.
+  <|EOT|>
+<EOS>
+```
+
+The model learns to recognize when external information or actions are needed and generates structured tool calls. However, the model doesn't execute tools directly—it produces instructions that the caller must execute, returning results to the model in the next interaction.
+
+You can think of this type of model and its generation API as a completion machine for conversations with access to tools for making observations or triggering actions:
+
+```
+prompt: How's the weather in Paris?
+answer: tool:getWeather("Paris").
+prompt: 28C sunny
+answer: The current weather in Paris is 28C and sunny.
+```
+
+While tool-calling models can generate responses and invoke functions, they remain fundamentally generative, producing one output for each input.
+
+## 1.3 AI 에이전트
+
+Agents add orchestration and state management to generation: unlike stateless, single-turn AI APIs, agents are stateful, multi-turn components capable of persistently pursuing an objective.
+
+### 1.3.1 에이전트
+
+We define an agent A as a tuple of model M, a set of tools T, and a system prompt s:
+
+```
+A = (M, T, s)
+```
+
+We define an agent instance Ai (also called a session or a conversation), with an identifier i as a tuple of model M, tools T, system prompt s, and history h:
+
+```
+Ai = (M, T, s, h)
+```
+
+The history h transforms the abstract agent definition into an agent instance or execution. History is structured as a sequence of exchanges:
+
+```
+h = [(u₁, a₁), (u₂, a₂), (u₃, a₃), (u₄, a₄), ...]
+```
+
+where u represents a user message and a represents an agent response.
+
+When tool calling is involved, the history expands to include tool calls (t) and their results (r):
+
+```
+h = [(u₁, a₁), (u₂, t₁), (r₁, a₂), (u₃, a₃), ...]
+```
+
+### 1.3.2 에이전트 루프
+
+AI Agents are structured around a central orchestration loop that coordinates between the AI API, user, and tools while managing conversation state. This agent loop represents the primary engineering challenge in agentic applications. The loop is responsible for managing state, coordinating asynchronous, long-running operations, and handling recovery in case of failure.
+
+## 1.4 에이전틱 애플리케이션
+
+Agentic applications range from single-agent systems to multi-agent systems where agents coordinate with other agents. In multi-agent systems, agents may invoke other agents, creating dynamic call graphs (see Figure 1.7).
+
+<br />
+
+![Figure 1.7](/img/chapter1/figure1.7.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  Figure 1.7: Multi-agent systems form dynamic call graphs with agents invoking other agents and tools
+</div>
+
+<br />
+
+## 1.5 첫 만남
+
+Having established the foundations, let's interact with an actual AI API. We'll primarily use OpenAI for examples, though the patterns apply to other providers.
+
+### 1.5.1 기본 API
+
+Listing 1.7 illustrates the most basic interaction with the API. We provide the desired model, the context, that is, the conversation's history and current prompt, and request a completion.
+
+```typescript
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+async function main() {
+  const completion = await openai.chat.completions.create({
+    model: "gpt-5",
+    messages: [{
+      role: "user", content: "What is the capital of France?"
+    }]
+  });
+
+  console.log(completion);
+}
+
+main();
+```
+
+<div className="listing-description">
+  리스팅 1.7: 기본 OpenAI API 상호작용
+</div>
+
+The API returns a structured response (Listing 1.8):
+
+```json {10}
+{
+  "id": "chatcmpl-C5rNhjKYS8nYoXdnZmTjK5T2FEsVX",
+  "object": "chat.completion",
+  "model": "gpt-5-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Paris.",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "total_tokens": 23,
+    "prompt_tokens": 12,
+    "completion_tokens": 11
+  }
+}
+```
+
+<div className="listing-description">
+  리스팅 1.8: 어시스턴트의 응답
+</div>
+
+However, most times in this book, we are simply interested in the AI's answer (Listing 1.9)
+
+```typescript
+const answer : string? = completion.choices[0]?.message?.content;
+```
+
+<div className="listing-description">
+  리스팅 1.9: 어시스턴트의 응답 콘텐츠 추출
+</div>
+
+### 1.5.2 스트리밍 API
+
+Many AI APIs offer two modes of operation: batch (returning the response at once) and streaming (returning the response progressively, token by token). The streaming mode has the potential to improve the user experience: Instead of waiting, users see the response forming in real-time, creating a natural, conversational feel and reducing perceived latency (see Listing 1.10).
+
+```typescript
+import OpenAI from "openai";
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+async function main() {
+  const stream = await openai.chat.completions.create({
+    model: "gpt-4",
+    messages: [{
+      role: "user", content: "Tell me about Paris"
+    }],
+    stream: true,
+  });
+
+  let answer = "";
+
+  for await (const chunk of stream) {
+    const content = chunk.choices?.[0]?.delta?.content;
+    if (content) {
+      process.stdout.write(content);
+      answer += content;
+    }
+  }
+
+}
+
+main();
+```
+
+<div className="listing-description">
+  리스팅 1.10: 실시간 토큰별 응답을 위한 스트리밍 API
+</div>
+
+Streaming comes with challenges:
+
+- **Ephemeral vs Durable** Streaming introduces architectural complexity. While tokens arrive progressively for display, the application needs the complete response to update conversation history and trigger dependent operations. This dual requirement, handling both the ephemeral stream and the durable result, complicates system design, particularly when different components need different views of the same response.
+
+### 1.5.3 도구 호출
+
+Tool calling extends conversation models with the ability to invoke external functions, enabling AI to interact with the world beyond text generation through structured function calls (see Listing 1.11).
+
+```typescript
+import OpenAI from "openai";
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+const tools = [
+  {
+    type: "function",
+    function: {
+      name: "get_current_weather",
+      description: "Get the current weather in a given location",
+      parameters: {
+        type: "object",
+        properties: {
+          location: {
+            type: "string",
+            description:
+              "The city, state, and country, e.g. Berlin, Germany or San Francisco, CA, USA",
+          },
+        },
+        required: ["location"],
+      },
+    },
+  },
+];
+
+async function main() {
+  const completion = await openai.chat.completions.create({
+    model: "gpt-5",
+    messages: [
+      {
+        role: "user",
+        content: "What is the weather in Paris right now",
+      },
+    ],
+    tools: tools,
+  });
+
+  console.log(JSON.stringify(completion));
+}
+
+main();
+
+```
+
+<div className="listing-description">
+  리스팅 1.11: 도구 호출 API
+</div>
+
+The API returns a response containing a tool call (Listing 1.12):
+
+```json
+{
+  "id": "chatcmpl-C76JQRfuc9HXpErPldbVyRuieZ8Lm",
+  "object": "chat.completion",
+  "created": 1755808596,
+  "model": "gpt-5-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          {
+            "id": "call_hQF9XaYtq8ZO6LJl6S3WctoU",
+            "type": "function",
+            "function": {
+              "name": "get_current_weather",
+              "arguments": "{\"location\":\"Paris, France\"}"
+            }
+          }
+        ],
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "tool_calls"
+    }
+  ],
+}
+```
+
+<div className="listing-description">
+  리스팅 1.12: 어시스턴트의 응답
+</div>
+
+Tool calling comes with challenges:
+
+- **The API does not execute tools directly.** Instead, the API returns a structured representation of the intended call. The calling application must execute the tool and return results.
+
+- **Tool calls create blocking dependencies.** The conversation cannot proceed until the tool result is provided in the next turn. Missing this step raises an exception.
+
+This pattern makes the application responsible for tool execution, coordination, and failure handling, adding significant complexity beyond managing text generation.
+
+### 1.5.4 간단한 에이전트
+
+Listing 1.13 demonstrates the transition from AI API to AI Agent. While the previous examples showed isolated, single-turn interactions where each API call existed independently, this implementation reveals how wrapping the AI API in a persistent loop transforms it into a conversational agent. The key insight is memory—by maintaining conversation history across interactions, we transform stateless API calls into stateful dialogue.
+
+```typescript {15-17}
+import OpenAI from "openai";
+// peripherals.ts provides simple console I/O utilities
+import { getUserInput, closeUserInput } from "./peripherals";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+async function main() {
+  const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [{
+    role: "system", content: "End your final answer with <EXIT>.",
+  }];
+
+  while (true) {
+    let prompt = await getUserInput(
+      "User (type 'exit' to quit):",
+    );
+
+    if (prompt.toLowerCase() === "exit") {
+      break;
+    }
+
+    messages.push({role: "user", content: prompt});
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: messages
+    });
+
+    const answer = completion.choices[0]?.message?.content;
+
+    messages.push({role: "assistant", content: answer});
+
+    console.log("Assistant:", answer);
+
+    if (answer.includes("<EXIT>")) {
+      break;
+    }
+  }
+
+  closeUserInput();
+}
+
+main();
+```
+
+<div className="listing-description">
+  Listing 1.13: Simple conversational agent with loop-based interaction
+</div>
+
+This minimal implementation reveals the essential architecture that underlies all AI agents. Every agent must address fundamental concerns:
+
+- **State Management**: Maintaining conversation history across interactions. Here, the `messages` array accumulates dialogue, transforming stateless API calls into stateful conversation.
+
+- **Identity Management**: Maintaining the agent's unique identity. Here, identity management consists only of relying on the running process.
+
+- **Lifecycle Management**: Handling initialization, execution, suspension, resumption, and termination. Here, lifecycle management consists only of basic termination conditions (user "exit", AI `<EXIT>`).
+
+While our simple agent functions correctly, it exposes fundamental challenges that become critical at scale. The agent spends most of its time idle, blocking at `getUserInput()`. More critically, this tight coupling between process and agent creates fragility—if the process crashes, terminates, or requires restart, the entire agent instance vanishes, taking all conversation context with it.
+
+### 1.5.5 지속성 에이전트를 향해
+
+The fundamental flaw in our simple agent architecture is the binding of the agent instance to the process instance. This coupling creates insurmountable problems in production systems:
+
+**Identity and State Crisis**: The agent's identity and memory must transcend the substrate that executes the agent. If a system restart or a crash obliterates the agent's identity and accumulated knowledge, the agent is unsuitable for any meaningful long-term engagement.
+
+**Operational Impossibility**: Long-running processes cannot coexist with modern operational practices. Cloud platforms recycle virtual machines, restart containers, and terminate serverless processes when not in use. An agent that cannot survive these routine operations is operationally unviable. We need agents that can checkpoint their state, suspend execution, migrate to different processes, and resume seamlessly.
+
+The core insight is that agent instances must be portable, capable of moving between processes and machines while preserving their identity, state, and ongoing interactions with the user, tools, or other agents. This requires a fundamental architectural separation between the agent's logical and physical existence.
+
+Listing 1.14 represents a crude attempt to address these problems through file-based persistence:
+
+```typescript
+import OpenAI from "openai";
+import fs from "fs/promises";
+import path from "path";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const SYSTEM = "End your final answer with the symbol <EXIT>.";
+
+interface ConversationData {
+  messages: OpenAI.Chat.ChatCompletionMessageParam[];
+}
+
+async function loadConversation(
+  identifier: string,
+): Promise<OpenAI.Chat.ChatCompletionMessageParam[]> {
+  const filePath = path.join(process.cwd(), `${identifier}.json`);
+
+  try {
+    const data = await fs.readFile(filePath, "utf-8");
+    const conversation: ConversationData = JSON.parse(data);
+    return conversation.messages;
+  } catch (error) {
+    // File doesn't exist, return new conversation with system message
+    return [
+      {
+        role: "system",
+        content: SYSTEM,
+      },
+    ];
+  }
+}
+
+async function saveConversation(
+  identifier: string,
+  messages: OpenAI.Chat.ChatCompletionMessageParam[],
+): Promise<void> {
+  const filePath = path.join(process.cwd(), `${identifier}.json`);
+  const conversation: ConversationData = { messages };
+  await fs.writeFile(filePath, JSON.stringify(conversation, null, 2));
+}
+
+async function main() {
+  // Parse command line arguments
+  const args = process.argv.slice(2);
+
+  if (args.length < 2) {
+    console.error("Usage: ts-node index-4.ts <identifier> <prompt>");
+    process.exit(1);
+  }
+
+  const identifier = args[0];
+  const prompt = args.slice(1).join(" ");
+
+  try {
+    // Load existing conversation or create new one
+    const messages = await loadConversation(identifier);
+
+    // Add user message
+    messages.push({role: "user", content: prompt});
+
+    // Get completion from OpenAI
+    const completion = await openai.chat.completions.create({
+      model: "gpt-5",
+      messages: messages
+    });
+
+    const answer = completion.choices[0]?.message?.content;
+
+    if (answer) {
+      // Add assistant response
+      messages.push({role: "assistant", content: answer});
+
+      // Save conversation
+      await saveConversation(identifier, messages);
+
+      // Output the response
+      console.log("Assistant:", answer);
+    } else {
+      console.error("No response from OpenAI");
+    }
+  } catch (error) {
+    console.error("An error occurred:", error);
+    process.exit(1);
+  }
+}
+
+// Run the main function
+main();
+```
+
+<div className="listing-description">
+  Listing 1.14: Persistent conversation state using file storage
+</div>
+
+This naive implementation highlights why agent systems require sophisticated infrastructure for identity management, state persistence, and process orchestration—the foundational challenges we must solve to build production-ready agentic applications.
+
+## 1.6 요약
+
+- A token is a numerical identifier for a text fragment.
+- A tokenizer maintains bidirectional mappings between tokens and text fragments.
+- A model is an ordered set of parameters that assigns probabilities to tokens given a context.
+- Models are characterized by parameter count (information storage capacity) and context window (information processing capacity).
+- Training creates or updates model parameters from datasets, either from scratch or through fine-tuning.
+- Inference applies a model to predict the next token, using controlled randomness for varied outputs.
+- Completion models generate text continuations from prompts.
+- Conversation models add role-based structure to maintain multi-turn conversation.
+- Tool-calling models generate structured function calls but do not execute them directly.
+- Agents combine models, tools, and system prompts with persistent state management.
+- Agent instances maintain conversation history to transform stateless APIs into stateful systems.
+- Building production agents requires sophisticated infrastructure for identity management, state persistence, and process orchestration.
