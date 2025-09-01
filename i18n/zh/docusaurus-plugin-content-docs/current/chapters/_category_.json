@@ -1,0 +1,10 @@
+{
+  "label": "章节",
+  "position": 3,
+  "collapsed": false,
+  "collapsible": false,
+  "link": {
+    "type": "doc",
+    "id": "chapters/index"
+  }
+}

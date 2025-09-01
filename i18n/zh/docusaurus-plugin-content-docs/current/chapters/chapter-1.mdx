@@ -1,0 +1,845 @@
+---
+id: chapter-1
+title: 1. 从 AI 到智能体应用
+sidebar_label: 第 1 章
+last_update:
+  date: "09-01-2025"
+---
+
+### 本章内容
+- AI 基础
+- AI 智能体和智能体应用
+- 初次接触 AI API 和 AI 智能体
+
+每个应用都将成为智能体应用。从在您的 IDE 或终端本地运行的编码智能体，到在分布式环境中编排操作的企业智能体，智能体应用是为追求目标而自主、持续运行的应用（图 1.1）。
+
+<br />
+
+![图 1.1](/img/chapter1/figure1.1.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  图 1.1：智能体应用为追求目标而自主、持续地运行
+</div>
+
+<br />
+
+智能体应用由 AI 智能体组成，而 AI 智能体由 AI API 组成。为了有效地设计这些系统，我们必须自下而上地理解它们的结构和行为。在本章中，我们从底层开始，了解词元（tokens）、模型、训练和推理如何约束更高层次的行为。
+
+## 1.1 AI 基础
+
+传统应用向智能体应用的转变由大型语言模型（LLMs）驱动。与以往狭窄且特定于领域的 AI 技术不同，LLMs 是广泛且通用的，能够推理目标并编排复杂的操作。因此，在本书中，我们将主要通过 LLMs 的视角来研究 AI API、智能体和智能体应用的世界。
+
+:::info 概念框架
+虽然我们使用来自各种 AI 提供商的具体示例，但我们专注于构建一个概念框架，捕捉跨系统共享的基本行为。机制可能不同，但高层模式保持一致，为工程化智能体应用提供可靠的基础
+:::
+
+LLMs 由四个基本组件构建：词元、模型、训练和推理（见图 1.2）。
+
+<br />
+
+![图 1.2](/img/chapter1/figure1.2.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  图 1.2：大型语言管道，显示词元、模型、训练和推理之间的关系
+</div>
+
+<br />
+
+系统工程师不实现这些底层组件，但即使在概念层面理解这些基础，对于构建可靠且可扩展的智能体应用也是必不可少的。
+
+### 1.1.1 词元
+
+LLMs 对文本进行操作：它们在文本上训练，接收文本作为输入，并返回文本作为输出。然而，LLMs 处理文本的方式与人类不同。人类将文本划分为字符或单词（见图 1.3）。
+
+<br />
+
+![图 1.3](/img/chapter1/figure1.3.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  图 1.3：人类为人类将文本划分为字符或单词。
+</div>
+
+<br />
+
+LLMs 则将文本划分为词元，即文本片段的数字标识符（见图 1.4）。
+
+<br />
+
+![图 1.4](/img/chapter1/figure1.4.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  图 1.4：GPT-4o 分词器将文本划分为词元及其数值。
+</div>
+
+<br />
+
+不同的分词器为文本片段分配不同的数值。就我们的目的而言，我们将分词抽象为其基本接口（见清单 1.1）：
+
+```typescript
+// Token 是文本片段的数值表示
+type Token = number
+
+interface Tokenizer {
+  // 表示将文本转换为词元的抽象函数
+  function encode(String) : Token[]
+
+  // 表示将词元转换为文本的抽象函数
+  function decode(Token[]) : String
+}
+```
+
+<div className="listing-description">
+  清单 1.1：分词器的抽象表示，作为具有编码和解码函数的接口
+</div>
+
+分词器维护从词元到其关联文本片段的映射。此外，它可能定义特殊词元或控制词元（类似于 ASCII 或 Unicode 中的回车等控制字符）。所有词元的集合也称为字母表或词汇表。
+
+### 1.1.2 模型
+
+模型是 AI 的公众形象。来自 OpenAI、Anthropic 和其他提供商的新版本发布备受期待，被广泛讨论、赞扬和批评。如今，一次发布就是一场文化事件，演示会迅速传播，令人惊讶或失望的行为轶事快速流传。
+
+在炒作之下，模型出人意料地平凡：一个有序的参数集合（见清单 1.2）。
+
+```typescript
+// 表示模型参数的类型
+type Param = number;
+
+// 表示模型的类型
+type Model = Param[];
+
+// 上下文窗口长度
+function length(model : Model) : number
+```
+
+<div className="listing-description">
+  清单 1.2：将模型表示为参数数组
+</div>
+
+跨提供商的 LLMs 具有两个特征属性：
+
+**参数数量**：模型在训练期间可以学习的参数数量。这表示模型*总共*可以存储多少信息。当前模型的范围从数十亿到数万亿个参数。
+
+**上下文窗口**：模型在推理期间可以处理的词元数量。这表示模型*一次*可以考虑多少信息。当前模型的范围从数万到超过 200 万个词元。
+
+实际上，这些参数形成了一个巨大的查找表。对于上下文窗口内的任何词元序列，模型都会生成一个概率向量，为词汇表中的每个词元分配成为下一个词元的可能性。这是模型的唯一功能：给定上下文，预测下一个词元。
+
+数十亿个参数编码了从训练数据中学到的模式。这些模式涵盖了从基本语法规则到复杂推理策略、事实知识和风格偏好的所有内容。它们共同定义了模型的能力和限制。
+
+:::note 形式化
+使用像 TLA+（时序动作逻辑）这样的形式化系统，我们可以将模型形式化为：
+
+```tla
+# 大型语言模型的词汇表
+TOKENS == { ... }
+
+# 上下文窗口长度
+LENGTH == 1000000
+
+# 模型将每个词元序列映射到每个词元的概率
+MODELS ==
+  [ { s ∈ Seq(TOKENS) : Len(s) ≤ LENGTH } → [TOKENS → [0.0 .. 1.0]] ]
+```
+:::
+
+模型通过训练期间所需的大量资源和推理期间展示的能力让人震惊和敬畏。
+
+### 1.1.3 训练
+
+训练是基于数据集创建或更新模型，或更具体地说是模型参数的功能（见清单 1.3）。
+
+```typescript
+// 表示初始、空或从头开始的模型的变量
+const init: Model = [];
+
+// 表示训练的抽象函数
+function train(model: Model, dataset: Set<Token[]>): Model
+```
+
+<div className="listing-description">
+  清单 1.3：抽象训练函数签名
+</div>
+
+训练有两种变体：
+
+1. **从头开始训练模型**：从空模型开始学习模型的参数。需要大量的训练数据、计算资源和时间。
+
+2. **从基础模型训练（微调）**：从基础模型开始学习模型的参数。需要较少的训练数据、计算资源和时间。
+
+:::info 建模选择
+
+我们可以将创建和更新模型建模为两个不同的函数。然而，通过将两者表示为一个函数，我们可以减少认知负荷，并且可以建立模型之间的关系，所有模型都源于从头开始的模型（见图 1.5）。
+
+:::
+
+<br />
+
+![图 1.5](/img/chapter1/figure1.5.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  图 1.5：模型关系显示所有模型如何通过训练从初始的从头开始模型派生
+</div>
+
+<br />
+
+:::note 形式化
+您可以将训练视为在模型空间中非确定性地选择一个模型。在这里，非确定性选择完全抽象了任何训练机制。
+
+```tla
+# 我们通过在模型空间中非确定性地选择一个模型来抽象训练
+train(dataset) ==
+  CHOOSE model ∈ MODELS : TRUE
+```
+:::
+
+由于资源需求巨大，从头开始训练仅对 AI 实验室可行，而微调对许多团队来说是可行的。
+
+### 1.1.4 推理
+
+推理是将模型应用于词元序列以产生下一个词元的功能（见清单 1.4）。
+
+```typescript
+function infer(model : Model, context : Token[]) : Token
+```
+
+<div className="listing-description">
+  清单 1.4：抽象推理函数签名
+</div>
+
+模型是确定性的数学函数：给定相同的输入，它们总是产生相同的概率分布。然而，推理不是总是选择最高概率的词元，而是使用 top-k 采样等策略从概率分布中采样。这种受控的随机性使输出多样化且看似有创意。例如，给定提示"法国的首都是"，推理可能（迭代地）产生"巴黎"或"巴黎市"。
+
+:::info 受控随机性
+采样并非真正随机。采样依赖于用种子值实例化的伪随机数生成器。给定相同的种子和相同的上下文，推理每次都会产生相同的结果。然而，这个种子参数通常不在 API 接口中公开，所以我们应该默认将推理视为随机的。
+:::
+
+:::note 形式化
+infer 选择 top-k 词元，即最大概率的前 k 个词元，并做出非确定性选择
+
+```tla
+# 我们通过非确定性地选择给定上下文的 10 个最可能词元中的
+# 下一个词元来抽象推理
+Infer(model, context) ==
+  CHOOSE token ∈ TOPK(model[context], 10)
+```
+:::
+
+## 1.2 模型和 AI API
+
+基础组件（词元、模型、训练和推理）结合起来创建实用的 AI API。通过迭代推理，一次预测一个词元，我们将概率分布转换为连贯的文本。不同的训练方法产生不同的 API 能力。我们将研究三种不同类型的模型：
+
+- 补全模型（也称为基础模型）
+- 对话模型（也称为聊天模型）
+- 工具调用模型
+
+<br />
+
+![图 1.6](/img/chapter1/figure1.6.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  图 1.6：模型类型及其训练/微调关系
+</div>
+
+### 1.2.1 补全模型
+
+补全模型被训练来完成文本。它们的训练数据由包含在特殊边界标记中的词元序列组成：
+
+- **BOS**—序列开始。标记词元序列的开始。
+- **EOS**—序列结束。标记词元序列的结束。
+
+BOS 和 EOS 是训练的重要组成部分，允许模型编码序列的开始和结束。这是模型如何学会生成完整、有界的响应而不是无限继续的方式。
+
+```
+<BOS>
+  法国的首都是巴黎。
+<EOS>
+```
+
+补全模型通过迭代生成下一个词元来完成文本，直到我们遇到停止词元（见清单 1.5）
+
+```typescript
+
+// 假设全局分词器具有 BOS 和 EOS 特殊词元
+
+function generate(model: Model, promptTokens: Token[]): Token[] {
+  const answerTokens: Token[] = [];
+
+  while (true) {
+    const next = infer(model, [
+      tokenizer.BOS,
+      ...promptTokens,
+      ...answerTokens
+    ]);
+    if (next == tokenizer.EOS) {
+      break;
+    }
+    answerTokens.push(next);
+  }
+
+  return answerTokens;
+}
+
+function complete(model: Model, prompt: string): string {
+  const promptTokens: Token[] = tokenizer.encode(prompt);
+  const answerTokens: Token[] = generate(model, promptTokens);
+  return tokenizer.decode(answerTokens);
+}
+```
+
+<div className="listing-description">
+  清单 1.5：基础模型的词元生成和文本补全函数
+</div>
+
+您可以将这种类型的模型及其生成 API 视为句子的补全机器：给定提示，API 生成提示的补全。
+
+```
+提示：法国的首都
+答案：是巴黎
+```
+
+补全模型是第一批可用的 LLMs。虽然与今天的对话和工具调用模型相比有限，但它们仍然是概念基础：每次交互仍然归结为迭代词元预测。
+
+### 1.2.2 对话模型
+
+对话模型是经过微调以在遵循指令的同时完成对话的补全模型。它们的训练数据添加了角色标记以区分系统指令和参与者：
+
+```
+<BOS>
+  <|BOT role=system|>
+    你是一个有用的助手。
+  <|EOT|>
+  <|BOT role=user|>
+    法国的首都是什么？
+  <|EOT|>
+  <|BOT role=assistant|>
+    法国的首都是巴黎。
+  <|EOT|>
+<EOS>
+```
+
+角色标记代表了关键的进展：结构化协议的出现。模型不仅学会完成文本，还学会参与多轮对话，跨发言者维护上下文并遵循系统级指令。
+
+像补全模型一样，对话模型迭代生成词元，直到我们遇到停止词元（见清单 1.6）：
+
+```typescript
+type Turn = {
+  role: "SYSTEM" | "USER" | "ASSISTANT"
+  text: string
+}
+
+function converse(model : Model, prompt: Turn[]) : Turn {
+  const promptTokens: Token[] = prompt.flatMap(turn => [
+    tokenizer.BOT(turn.role),
+    ...tokenizer.encode(turn.text),
+    tokenizer.EOT()
+  ]);
+
+  const answerTokens: Token[] = generate(model, promptTokens)
+
+  // 解析响应文本以提取助手的回合
+  return Turn.parse(tokenizer.decode(answerTokens))
+}
+```
+
+<div className="listing-description">
+  清单 1.6：具有基于角色的回合的聊天模型的对话函数
+</div>
+
+您可以将这种类型的模型及其生成 API 视为对话的补全机器：给定提示，API 生成答案的补全。
+
+```
+提示：法国的首都是什么？
+答案：法国的首都是巴黎。
+```
+
+虽然对话模型可以与用户交互，但它们不能与环境交互。工具调用模型弥合了这一差距。
+
+### 1.2.3 工具调用模型
+
+工具调用模型通过调用外部函数的能力扩展了对话模型。它们的训练数据在系统提示中包含工具定义，并为工具响应添加了新角色：
+
+```
+<BOS>
+  <|BOT role=system|>
+    你是一个有用的助手。你可以调用工具：
+      - getWeather(location: string)：返回当前天气。
+  <|EOT|>
+  <|BOT role=user|>
+    巴黎的天气怎么样？
+  <|EOT|>
+  <|BOT role=assistant|>
+    tool:getWeather("Paris")
+  <|EOT|>
+  <|BOT role=tool|>
+    28C 晴天
+  <|EOT|>
+  <|BOT role=assistant|>
+    巴黎当前的天气是 28 摄氏度，晴天。
+  <|EOT|>
+<EOS>
+```
+
+模型学会识别何时需要外部信息或操作，并生成结构化的工具调用。然而，模型不直接执行工具——它产生调用者必须执行的指令，在下一次交互中返回结果。
+
+您可以将这种类型的模型及其生成 API 视为具有访问工具以进行观察或触发操作的对话补全机器：
+
+```
+提示：巴黎的天气怎么样？
+答案：tool:getWeather("Paris")。
+提示：28C 晴天
+答案：巴黎当前的天气是 28 摄氏度，晴天。
+```
+
+虽然工具调用模型可以生成响应并调用函数，但它们仍然是基本生成的，为每个输入产生一个输出。
+
+## 1.3 AI 智能体
+
+智能体为生成添加了编排和状态管理：与无状态、单轮 AI API 不同，智能体是有状态、多轮的组件，能够持续追求目标。
+
+### 1.3.1 智能体
+
+我们将智能体 A 定义为模型 M、一组工具 T 和系统提示 s 的元组：
+
+```
+A = (M, T, s)
+```
+
+我们将智能体实例 Ai（也称为会话或对话）定义为具有标识符 i 的模型 M、工具 T、系统提示 s 和历史 h 的元组：
+
+```
+Ai = (M, T, s, h)
+```
+
+历史 h 将抽象的智能体定义转换为智能体实例或执行。历史被结构化为一系列交换：
+
+```
+h = [(u₁, a₁), (u₂, a₂), (u₃, a₃), (u₄, a₄), ...]
+```
+
+其中 u 代表用户消息，a 代表智能体响应。
+
+当涉及工具调用时，历史扩展为包括工具调用（t）及其结果（r）：
+
+```
+h = [(u₁, a₁), (u₂, t₁), (r₁, a₂), (u₃, a₃), ...]
+```
+
+### 1.3.2 智能体循环
+
+AI 智能体围绕一个中央编排循环构建，该循环在 AI API、用户和工具之间进行协调，同时管理对话状态。这个智能体循环代表了智能体应用中的主要工程挑战。该循环负责管理状态、协调异步、长时间运行的操作，以及在失败情况下处理恢复。
+
+## 1.4 智能体应用
+
+智能体应用的范围从单智能体系统到多智能体系统，其中智能体与其他智能体协调。在多智能体系统中，智能体可能调用其他智能体，创建动态调用图（见图 1.7）。
+
+<br />
+
+![图 1.7](/img/chapter1/figure1.7.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  图 1.7：多智能体系统形成动态调用图，智能体调用其他智能体和工具
+</div>
+
+<br />
+
+## 1.5 初次接触
+
+建立了基础之后，让我们与实际的 AI API 交互。我们将主要使用 OpenAI 作为示例，尽管这些模式适用于其他提供商。
+
+### 1.5.1 基本 API
+
+清单 1.7 说明了与 API 的最基本交互。我们提供所需的模型、上下文（即对话的历史和当前提示），并请求补全。
+
+```typescript
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+async function main() {
+  const completion = await openai.chat.completions.create({
+    model: "gpt-5",
+    messages: [{
+      role: "user", content: "法国的首都是什么？"
+    }]
+  });
+
+  console.log(completion);
+}
+
+main();
+```
+
+<div className="listing-description">
+  清单 1.7：基本 OpenAI API 交互
+</div>
+
+API 返回一个结构化响应（清单 1.8）：
+
+```json {10}
+{
+  "id": "chatcmpl-C5rNhjKYS8nYoXdnZmTjK5T2FEsVX",
+  "object": "chat.completion",
+  "model": "gpt-5-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "巴黎。",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "total_tokens": 23,
+    "prompt_tokens": 12,
+    "completion_tokens": 11
+  }
+}
+```
+
+<div className="listing-description">
+  清单 1.8：助手的响应
+</div>
+
+然而，本书中大多数时候，我们只对 AI 的答案感兴趣（清单 1.9）
+
+```typescript
+const answer : string? = completion.choices[0]?.message?.content;
+```
+
+<div className="listing-description">
+  清单 1.9：提取助手的响应内容
+</div>
+
+### 1.5.2 流式 API
+
+许多 AI API 提供两种操作模式：批处理（一次返回响应）和流式（逐词元递进返回响应）。流式模式有可能改善用户体验：用户不必等待，而是实时看到响应的形成，创造出自然、对话式的感觉并减少感知延迟（见清单 1.10）。
+
+```typescript
+import OpenAI from "openai";
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+async function main() {
+  const stream = await openai.chat.completions.create({
+    model: "gpt-4",
+    messages: [{
+      role: "user", content: "告诉我关于巴黎的信息"
+    }],
+    stream: true,
+  });
+
+  let answer = "";
+
+  for await (const chunk of stream) {
+    const content = chunk.choices?.[0]?.delta?.content;
+    if (content) {
+      process.stdout.write(content);
+      answer += content;
+    }
+  }
+
+}
+
+main();
+```
+
+<div className="listing-description">
+  清单 1.10：用于实时逐词元响应的流式 API
+</div>
+
+流式带来了挑战：
+
+- **临时性与持久性** 流式引入了架构复杂性。虽然词元逐步到达以供显示，但应用程序需要完整的响应来更新对话历史并触发依赖操作。这种双重需求，处理临时流和持久结果，使系统设计复杂化，特别是当不同组件需要相同响应的不同视图时。
+
+### 1.5.3 工具调用
+
+工具调用通过调用外部函数的能力扩展了对话模型，使 AI 能够通过结构化函数调用与文本生成之外的世界交互（见清单 1.11）。
+
+```typescript
+import OpenAI from "openai";
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+const tools = [
+  {
+    type: "function",
+    function: {
+      name: "get_current_weather",
+      description: "获取给定位置的当前天气",
+      parameters: {
+        type: "object",
+        properties: {
+          location: {
+            type: "string",
+            description:
+              "城市、州和国家，例如 德国柏林 或 美国加州旧金山",
+          },
+        },
+        required: ["location"],
+      },
+    },
+  },
+];
+
+async function main() {
+  const completion = await openai.chat.completions.create({
+    model: "gpt-5",
+    messages: [
+      {
+        role: "user",
+        content: "现在巴黎的天气怎么样",
+      },
+    ],
+    tools: tools,
+  });
+
+  console.log(JSON.stringify(completion));
+}
+
+main();
+
+```
+
+<div className="listing-description">
+  清单 1.11：工具调用 API
+</div>
+
+API 返回包含工具调用的响应（清单 1.12）：
+
+```json
+{
+  "id": "chatcmpl-C76JQRfuc9HXpErPldbVyRuieZ8Lm",
+  "object": "chat.completion",
+  "created": 1755808596,
+  "model": "gpt-5-2025-08-07",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          {
+            "id": "call_hQF9XaYtq8ZO6LJl6S3WctoU",
+            "type": "function",
+            "function": {
+              "name": "get_current_weather",
+              "arguments": "{\"location\":\"Paris, France\"}"
+            }
+          }
+        ],
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "tool_calls"
+    }
+  ],
+}
+```
+
+<div className="listing-description">
+  清单 1.12：助手的响应
+</div>
+
+工具调用带来了挑战：
+
+- **API 不直接执行工具。** 相反，API 返回预期调用的结构化表示。调用应用程序必须执行工具并返回结果。
+
+- **工具调用创建阻塞依赖。** 在下一轮提供工具结果之前，对话无法继续。错过这一步会引发异常。
+
+这种模式使应用程序负责工具执行、协调和故障处理，增加了管理文本生成之外的重大复杂性。
+
+### 1.5.4 一个简单的智能体
+
+清单 1.13 演示了从 AI API 到 AI 智能体的转变。虽然前面的示例显示了隔离的、单轮交互，其中每个 API 调用独立存在，但这个实现揭示了如何将 AI API 包装在持久循环中，将其转换为对话智能体。关键的洞察是内存——通过跨交互维护对话历史，我们将无状态的 API 调用转换为有状态的对话。
+
+```typescript {15-17}
+import OpenAI from "openai";
+// peripherals.ts 提供简单的控制台 I/O 实用程序
+import { getUserInput, closeUserInput } from "./peripherals";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+async function main() {
+  const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [{
+    role: "system", content: "用 <EXIT> 结束你的最终答案。",
+  }];
+
+  while (true) {
+    let prompt = await getUserInput(
+      "用户（输入 'exit' 退出）：",
+    );
+
+    if (prompt.toLowerCase() === "exit") {
+      break;
+    }
+
+    messages.push({role: "user", content: prompt});
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: messages
+    });
+
+    const answer = completion.choices[0]?.message?.content;
+
+    messages.push({role: "assistant", content: answer});
+
+    console.log("助手：", answer);
+
+    if (answer.includes("<EXIT>")) {
+      break;
+    }
+  }
+
+  closeUserInput();
+}
+
+main();
+```
+
+<div className="listing-description">
+  清单 1.13：具有基于循环的交互的简单对话智能体
+</div>
+
+这个最小的实现揭示了所有 AI 智能体基础的基本架构。每个智能体都必须解决基本问题：
+
+- **状态管理**：跨交互维护对话历史。在这里，`messages` 数组累积对话，将无状态的 API 调用转换为有状态的对话。
+
+- **身份管理**：维护智能体的唯一身份。在这里，身份管理仅包括依赖运行的进程。
+
+- **生命周期管理**：处理初始化、执行、暂停、恢复和终止。在这里，生命周期管理仅包括基本的终止条件（用户"exit"，AI `<EXIT>`）。
+
+虽然我们的简单智能体功能正确，但它暴露了在规模上变得关键的基本挑战。智能体大部分时间都处于空闲状态，在 `getUserInput()` 处阻塞。更关键的是，进程和智能体之间的紧密耦合造成了脆弱性——如果进程崩溃、终止或需要重启，整个智能体实例就会消失，带走所有对话上下文。
+
+### 1.5.5 走向持久智能体
+
+我们简单智能体架构的根本缺陷是将智能体实例绑定到进程实例。这种耦合在生产系统中造成了无法克服的问题：
+
+**身份和状态危机**：智能体的身份和内存必须超越执行智能体的基础设施。如果系统重启或崩溃消除了智能体的身份和累积的知识，智能体就不适合任何有意义的长期参与。
+
+**操作不可能性**：长时间运行的进程无法与现代操作实践共存。云平台回收虚拟机、重启容器，并在不使用时终止无服务器进程。无法在这些常规操作中存活的智能体在操作上是不可行的。我们需要能够检查点其状态、暂停执行、迁移到不同进程并无缝恢复的智能体。
+
+核心洞察是智能体实例必须是可移植的，能够在进程和机器之间移动，同时保留其身份、状态以及与用户、工具或其他智能体的持续交互。这需要智能体的逻辑存在和物理存在之间的基本架构分离。
+
+清单 1.14 代表了通过基于文件的持久性解决这些问题的粗略尝试：
+
+```typescript
+import OpenAI from "openai";
+import fs from "fs/promises";
+import path from "path";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const SYSTEM = "用符号 <EXIT> 结束你的最终答案。";
+
+interface ConversationData {
+  messages: OpenAI.Chat.ChatCompletionMessageParam[];
+}
+
+async function loadConversation(
+  identifier: string,
+): Promise<OpenAI.Chat.ChatCompletionMessageParam[]> {
+  const filePath = path.join(process.cwd(), `${identifier}.json`);
+
+  try {
+    const data = await fs.readFile(filePath, "utf-8");
+    const conversation: ConversationData = JSON.parse(data);
+    return conversation.messages;
+  } catch (error) {
+    // 文件不存在，返回带有系统消息的新对话
+    return [
+      {
+        role: "system",
+        content: SYSTEM,
+      },
+    ];
+  }
+}
+
+async function saveConversation(
+  identifier: string,
+  messages: OpenAI.Chat.ChatCompletionMessageParam[],
+): Promise<void> {
+  const filePath = path.join(process.cwd(), `${identifier}.json`);
+  const conversation: ConversationData = { messages };
+  await fs.writeFile(filePath, JSON.stringify(conversation, null, 2));
+}
+
+async function main() {
+  // 解析命令行参数
+  const args = process.argv.slice(2);
+
+  if (args.length < 2) {
+    console.error("用法：ts-node index-4.ts <标识符> <提示>");
+    process.exit(1);
+  }
+
+  const identifier = args[0];
+  const prompt = args.slice(1).join(" ");
+
+  try {
+    // 加载现有对话或创建新对话
+    const messages = await loadConversation(identifier);
+
+    // 添加用户消息
+    messages.push({role: "user", content: prompt});
+
+    // 从 OpenAI 获取补全
+    const completion = await openai.chat.completions.create({
+      model: "gpt-5",
+      messages: messages
+    });
+
+    const answer = completion.choices[0]?.message?.content;
+
+    if (answer) {
+      // 添加助手响应
+      messages.push({role: "assistant", content: answer});
+
+      // 保存对话
+      await saveConversation(identifier, messages);
+
+      // 输出响应
+      console.log("助手：", answer);
+    } else {
+      console.error("OpenAI 没有响应");
+    }
+  } catch (error) {
+    console.error("发生错误：", error);
+    process.exit(1);
+  }
+}
+
+// 运行主函数
+main();
+```
+
+<div className="listing-description">
+  清单 1.14：使用文件存储的持久对话状态
+</div>
+
+这个朴素的实现突出了为什么智能体系统需要复杂的基础设施来进行身份管理、状态持久性和进程编排——这些是我们必须解决的基础挑战，以构建生产就绪的智能体应用。
+
+## 1.6 总结
+
+- 词元是文本片段的数字标识符。
+- 分词器维护词元和文本片段之间的双向映射。
+- 模型是一组有序的参数，给定上下文为词元分配概率。
+- 模型的特征是参数数量（信息存储容量）和上下文窗口（信息处理容量）。
+- 训练从数据集创建或更新模型参数，可以从头开始或通过微调。
+- 推理应用模型来预测下一个词元，使用受控随机性产生多样化的输出。
+- 补全模型从提示生成文本延续。
+- 对话模型添加基于角色的结构以维护多轮对话。
+- 工具调用模型生成结构化的函数调用但不直接执行它们。
+- 智能体将模型、工具和系统提示与持久状态管理相结合。
+- 智能体实例维护对话历史，将无状态 API 转换为有状态系统。
+- 构建生产智能体需要复杂的基础设施来进行身份管理、状态持久性和进程编排。

@@ -1,0 +1,10 @@
+{
+  "title": {
+    "message": "智能体应用的系统工程",
+    "description": "The title in the navbar"
+  },
+  "logo.alt": {
+    "message": "SEAA 标志",
+    "description": "The alt text of navbar logo"
+  }
+}
