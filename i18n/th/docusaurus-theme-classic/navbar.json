@@ -1,0 +1,10 @@
+{
+  "title": {
+    "message": "วิศวกรรมระบบสำหรับแอปพลิเคชันแบบเอเจนต์",
+    "description": "The title in the navbar"
+  },
+  "logo.alt": {
+    "message": "โลโก้ SEAA",
+    "description": "The alt text of navbar logo"
+  }
+}
