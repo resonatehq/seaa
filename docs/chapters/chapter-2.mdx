@@ -1,0 +1,976 @@
+---
+id: chapter-2
+title: 2. Building an Agent
+sidebar_label: Chapter 2
+last_update:
+  date: "10-01-2025"
+---
+
+### This chapter covers
+
+- Agents and Environments
+- Goals and plans
+- Autonomy and Alignment
+- Context Engineering
+- The Desktop Warrior
+
+Your desktop is spotless. Completely empty, adorned by a carefully curated wallpaper highlighting your personality. Except for one folder: "Desktop". Inside Desktop, digital chaos reigns: old screenshots, old documents, hastily cloned github repos, never deleted. And, of course, another folder called "Desktop". The battle for order was lost long ago to Desktop's recursion depth.
+
+In this chapter, we’ll build a local AI agent to fight that battle. This Desktop Warrior is simple enough to follow, yet complex enough to reveal the patterns we will encounter when building ambitious, distributed agentic applications.
+
+<br />
+
+![Figure 2.1](/img/chapter2/figure2.1.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  Figure 2.1: The Desktop Warrior, interacting with the user and the file system
+</div>
+
+<br />
+
+## 2.1 Agents in their Environments
+
+Systems engineering depends on accurate and concise mental models to reason about complex systems. Before we tackle the Desktop Warrior, we need the mental models to reason rigorously about abstract concepts like autonomy and alignment, as well as fuzzy concepts like prompt engineering.
+
+:::info Uninterpreted Functions
+
+Complex systems often contain aspects that resist precise definition. When does an agent make the best decision? When is a desktop well organized? How can we reason rigorously about systems when key concepts remain undefined?
+
+Throughout this chapter, we make use of *uninterpreted functions*—functions with defined interfaces but unspecified implementations. We will use two types of uninterpreted functions: one that maps its arguments onto a boolean value, and another that maps its arguments onto a numerical value. Boolean values answer simple yes or no questions, while numerical values allow us to compare different outcomes.
+
+For example, to express preferences, we simply postulate a fitness function `U` that maps inputs to numerical values, where higher values indicate better outcomes:
+
+- **Preference**—If `U` maps a desktop without screenshots to a higher value than a desktop with screenshots, then a desktop without screenshots is preferable.
+
+  ```
+  U(Desktop[without screenshots]) > U(Desktop[with screenshots])
+  ```
+
+- **Equivalence**—If `U` maps a desktop without screenshots to the same value as a desktop with screenshots, then `U` doesn't express a preference, they are equivalent.
+
+  ```
+  U(Desktop[without screenshots]) = U(Desktop[with screenshots])
+  ```
+
+By separating the interface (what we need for reasoning) from the implementation (details we may not know or care about), we concentrate all uncertainty into `U`. This makes the rest of our model crisp: we can reason rigorously about agent behavior without defining what "better" actually means.
+
+:::
+
+### 2.1.1 Agents
+
+An agent is a component that operates autonomously in its environment in pursuit of an objective. We define an agent `𝒜` as a tuple of a model `M`, a set of tools `T`, and a system prompt `s`:
+
+```
+𝒜 = (M, T, s)
+```
+
+We define an agent instance `A` as an agent `𝒜` in this context, also called the configuration, extended with history `h`
+
+```
+A = (M, T, s, h)
+```
+
+The history h, also called the trajectory or trace of an agent instance, is the sequence of prompts `p` and replies `r`:
+```
+h = [(p₁, r₁), (p₂, r₂), ...]
+```
+
+If we want to be more concrete, we refine this generic notation: If the prompt comes from a user, we write `u`. If the reply is an answer to the user, we write `a`. Thus a conversation history between user and agent instance looks like:
+
+```
+h = [(u₁, a₁), (u₂, a₂), ...]
+```
+
+If tools are involved, the history expands: If the agent instance issues a tool call, we write `t`. If the tool call returns a result, we write `o`. Thus a conversation history involving tools looks like:
+
+```
+h = [(u₁, t₁), (o₁, a₁), ...]
+```
+
+This layered notation lets us zoom in or out: at the highest level, `p`, `r` suffice to reason abstractly about agent instance trajectories; at the concrete level, `u`, `a`, `t`, `o` clarifies who is speaking and to whom.
+
+#### Agent Evolution and Identity
+
+Agent instances evolve by accepting a prompt and generating a response (here we model the generation of `r` and appending (`p`, `r`) as an atomic step, but of course we could separate the steps if desired):
+
+```
+generate : A₁ = (M, T, s, h) × p → A₂ = (M, T, s, h + [(p, r)]) × r
+```
+
+Of course, we are not limited to generation. Since an agent instance is just a tuple of model, tools, system prompt, and history, we can alter any aspect of the agent instance. For example, we could reset the history:
+
+```
+redefine : A₁ = (M, T, s, h) × h := [] → A₂ = (M, T, s, [])
+```
+
+In everyday conversation, we speak of "the agent" as if the agent instance was a persistent, continuous entity, evolving over time—like talking to one person across multiple interactions. However, formally, every interaction (generation or redefinition) creates a new agent instance. For example, generate accepts `A₁` and yields `A₂` with an extended history.
+
+The result is a fundamental tension: our intuition suggests a single continuous agent instance, while the formal model suggests multiple discrete agent instances.
+
+This is more than a philosophical puzzle (see The Ship of Theseus). Without a notion of identity, we cannot reason rigorously about what counts as the same agent instance versus different agent instances, with wide-ranging consequences from authentication, authorization, billing or resource allocation.
+
+To reconcile this tension, we distinguish between two complementary notions of identity:
+
+- **Conversation Identity** (Physical)—Established mechanically by the system. We introduce a predicate `⟨A⟩ᵢ` to denote that agent instance `A` is part of conversation `i`.
+  ```
+  ⟨A₁⟩ᵢ → ⟨A₂⟩ᵢ => Conversation identity holds
+  ```
+
+- **Continuation Identity** Established perceptually by the user. We introduce a predicate `C(A₁, A₂)` that holds when the user accepts `A₂` as a valid continuation of `A₁`.
+
+  ```
+  A₁ → A₂ and C(A₁, A₂) => Continuation identity holds
+  ```
+
+These two notions can diverge significantly: Consider a history reset within a conversation `i`:
+
+```
+⟨A₁ = (M, T, s, h)⟩ᵢ → ⟨A₂ = (M, T, s, [])⟩ᵢ
+```
+
+The system maintains conversation identity (same `i`), but continuation identity breaks—the user experiences an agent with complete amnesia.
+
+#### Agent Equivalence
+
+We say that two agent instances are equivalent if they share the same conversation identity and continuation identity. Equivalence captures the idea of "the same agent instance in evolution": formally distinct states, but treated as one continuous entity.
+
+Equivalence provides a rigorous foundation for reasoning about practical transformations that agents undergo, such as:
+
+- **Model Swaps**—replacing `M` with a less resource intensive or more capable model.
+- **Prompt Tuning**—adjusting the system prompt `s` to achieve better performance.
+- **Context Compaction**—summarizing or compressing `h` to fit within context limits.
+
+:::note Agent vs Agent Instance
+
+In this section we have been precise in distinguishing between agent and agent instance, even at the cost of readability. From here on, unless the distinction is essential, we will simply use the term *agent* and rely on context to disambiguate.
+
+:::
+
+### 2.1.2 Environment
+
+An agent operates in its environment `E`. An environment is a tuple:
+
+```
+E = (S, A, O, δ, s₀)
+
+where
+- S is a set of states,
+- A is a set of actions,
+- O is a set of outputs,
+- δ : S × A → S × O is a transition function, and
+- s₀ ∈ S is the initial state.
+```
+
+A trajectory or trace `τ` is a potentially infinite alternating sequence of states and actions/outputs where each step satisfies `(sᵢ₊₁, oᵢ) = δ(sᵢ, aᵢ)`:
+
+```
+τ = s₀ - a₀/o₀ → s₁ - a₁/o₁ → s₂ - a₂/o₂ → ...
+```
+
+Actions can be classified as queries and commands:
+
+- **Queries**—Actions that do not modify the state of the environment, returning information to the caller.
+- **Commands**—Actions that do modify the state of the environment, optionally returning information to the caller.
+
+Not all actions, or more specifically commands, have the same impact. We can characterize impact along two axes:
+
+- **Scope**—Impact as a measurement of reachable states:
+  - **bounded**—the future state is from a subset of the state space
+  - **unbounded**—the future state is from the entire state space
+
+- **Reversibility**—Impact as a measurement of permanence:
+  - **reversible**—the action can be undone by performing another action.
+  - **irreversible**—the action cannot be undone.
+
+Unbounded and irreversible actions are particularly challenging in the context of agentic applications. While we want agents to act autonomously, unbounded and irreversible actions maximize uncertainty—and our anxiety.
+
+For example, the action `mv(src, dst)` is bounded and reversible, the action `rm(path)` is bounded but irreversible, and the action `bash(script)` is unbounded and potentially irreversible.
+
+**Example**
+
+For the Desktop Warrior, the environment is the local file system under `~/Desktop`.
+
+- States are snapshots of the files and directories:
+
+  ```
+  S = { File₁, File₂, ... }, where File = (path, meta, data)
+  ```
+
+- Actions are file system operations:
+
+  ```
+  A = { ls(path), rm(path), mv(src, dst), ... }
+  ```
+
+- Transitions model the effects of actions:
+
+  ```
+  δ(s, rm(path)) = s - { f | f.path = path }
+  ```
+
+- The initial state is the set of files and directories present on the desktop when the agent begins.
+
+### 2.1.3 Agent and Environment interaction
+
+An agent does not observe or change the environment directly. Instead, the agent relies on tools to inspect and effect changes on the environment (see Figure 2.2).
+
+<br />
+
+![Figure 2.2](/img/chapter2/figure2.2.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  Figure 2.2: Agents observe and manipulate their environment via tools.
+</div>
+
+<br />
+
+Tools have preconditions and postconditions that constrain their behavior. Preconditions and postconditions enable both humans and agents to reason about tool effects: knowing what must be true before a call and what will be true after helps select the right tool for achieving an objective.
+
+```
+{ pre } t { pos }
+
+where
+- { pre } describes what must be true at time of tool call, and
+- { pos } describes what will be true after the tool call
+```
+
+:::note Calling tools & effecting actions
+
+Throughout the book, we say an agent *calls* a tool and *effects* an action. This indirection emphasizes that agents interact with their environments only by calling tools and cannot call actions.
+
+:::
+
+#### Observations
+
+When an agent issues a tool call `t`:
+
+1. the tool call transitions the environment from `S` to `S'` and
+2. the tool call returns an output, also called an observation, `o`
+
+```
+execute: (S, t) → (S', o)
+```
+
+The agent must construct its knowledge base from executing tool calls, predicting their effect, and considering their (partial, possibly outdated) observations: The agent builds a world model, an internal representation of the state of the environment, `△` by considering everything the agent knows via training (the model `M`) and learns via context (the system prompt `s` and history `h`).
+
+```
+△ = interpret(M, s, h)
+```
+
+In other words, the agent never interacts with the environment directly. Instead, the agent only inspects and effects via tools, and gradually constructs △, a world model that evolves turn by turn.
+
+:::note Mental Model vs World Model
+
+We refer to the set of internalized facts in a human as a mental model and to the set of internalized facts in an agent as a world model. Conceptually they are the same.
+
+:::
+
+The agent's world model evolves with each interaction:
+
+
+- User prompts
+
+  ```
+  User: "I just added report-1.pdf to the desktop"
+  △' = { exists(~/Desktop/report-1.pdf) }
+  ```
+
+- Queries
+
+  ```
+  Tool: ls(~/Desktop) → [report-1.pdf, report-2.pdf]
+  △' = { exists(~/Desktop/report-1.pdf), exists(~/Desktop/report-2.pdf) }
+  ```
+
+- Commands
+
+  ```
+  Tool: rm(~/Desktop/report-1.pdf) → success
+  △' = { exists(~/Desktop/report-2.pdf) }
+  ```
+
+#### Actions
+
+The agent's tools `T` provide a limited interface to the environment's action space `A`. The relationship between tools `T` and actions `A` is either direct or compositional (see Figure 2.3):
+
+<br />
+
+![Figure 2.3](/img/chapter2/figure2.3.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  Figure 2.3: Direct tools and compositional tools
+</div>
+
+<br />
+
+- **Direct mapping**—Tools correspond to actions in a one-to-one manner.
+
+  ```typescript
+  // Tool: rm(path)
+  async function rm(path) {
+    // 'rm' is 'unlink' in nodejs, tool and actions correspond 1-to-1
+    await fs.promises.unlink(path);
+  }
+  ```
+
+- **Compositional mapping**—Tools are programs or workflows that correspond to a predetermined sequence of actions.
+
+  ```typescript
+  // Tool: deleteOldScreenshots(path, date)
+  async function deleteOldScreenshots(path: string, date: Date) {
+    for (const file of await readdir(path)) {
+      if (file.match(/screenshot.*/)) {
+        const stats = await stat(join(path, file))
+        if (stats.mtime < date) {
+          await unlink(join(path, file))
+        }
+      }
+    }
+  }
+  ```
+
+The choice between direct and compositional tools reflects a fundamental design tradeoff. Direct tools emphasize agent autonomy: the agent can effect any sequence of actions to achieve its goals. Compositional tools emphasize control: the agent is constrained to (from its point of view) predetermined workflows.
+
+In practice, agents use both types. Direct tools enable creative problem solving, plotting novel paths. Compositional tools enable reliable problem solving, following predetermined paths. The latter is particularly valuable when the agent has previously struggled to find a desirable path reliably. For example, the Desktop Warrior may use direct `ls`, `mv` to organize the desktop, but rely on `archiveBeforeDelete` to guarantee backing up a file before deletion.
+
+Of course, compositional tools can themselves be agents, enabling recursive composition.
+
+## 2.2 Goals, Plans, and Policies
+
+An agent operates autonomously in its environment in pursuit of an objective, in other words, an agent has a goal and needs to devise a plan to achieve that goal.
+
+:::note Environment Goals
+In this book, we frame goals and plans exclusively as influencing the state of the environment through actions, not as influencing the user through conversation.
+:::
+
+### 2.2.1 Goals
+
+An agent operates in pursuit of an objective, also called a goal `g`. A goal is a predicate over states:
+
+```
+g : S → {true, false}
+```
+
+which selects a subset of states, the goal states `G`, where any state in `G` is considered a desirable outcome:
+
+```
+G = { s ∈ S ∣ g(s) = true }.
+```
+
+In the example of the Desktop Warrior, a goal predicate is that there are no screenshots on the Desktop
+
+```
+no file ∈ S : file.meta.name.contains("screenshot")
+```
+
+Goals can often be decomposed into subgoals, which serve as intermediate objectives. Subgoals arise in two distinct forms:
+
+- **Conjunctive Subgoals**—A complex goal can be expressed as the conjunction of simpler goals. These simpler goals can be framed as subgoals.
+
+  ```
+  g(s) = g₁(s) ∧ g₂(s) ∧ ... ∧ gₙ(s)
+  ```
+
+  Example: For sake of example, an organized desktop is a desktop with no screenshots and no empty folders. So no screenshots and no empty folders are subgoals.
+
+- **Prerequisite Subgoals**—Some actions require conditions to hold before they can be executed. These conditions can be framed as subgoals.
+
+  ```
+  precondition(action) = gₛ(s)
+  ```
+
+  Example: For sake of example, to delete a folder, the folder must be empty. So empty folder is a subgoal.
+
+### 2.2.2 Plans
+
+Given an environment `E` with actions `A`, the current state `s`, and a goal `g`, a plan `p` is a sequence of actions (intended) to transition the system from its current state `s` to some goal state `s' ∈ G`.
+
+Unlike classical planning systems that compute a complete path from start to goal, agents generate actions incrementally, allowing them to adapt to changing conditions: Since agents are turn-based, they do not (commit to a) plan in advance. Instead, the agent generates the next action in pursuit of its goal, step by step, in response to the current prompt. Each choice builds on the history h, which records past interactions and provides the context for the next decision. Over time, a plan emerges as successive actions are generated:
+
+```
+a₁ = generate([], u₁)
+a₂ = generate([(u₁, a₁), (o₁, r₁)], u₂)
+a₃ = generate([(u₁, a₁), (o₁, r₁), (u₂, a₂), (o₂, r₂)], u₃)
+a₄ = ...
+```
+
+Each step builds on the history `h`, which encodes all past interactions and forms the context for the next decision.
+
+In the case of the Desktop Warrior, if the user says “Delete all screenshots from the desktop”, the agent may first list the files on the desktop and then iteratively delete each screenshot:
+
+```
+generate([("Delete all screenshots")]) → ls(~/Desktop)
+generate([..., (output of ls)]) → rm(~/Desktop/screenshot1.png)
+generate([..., (output of rm)]) → rm(~/Desktop/screenshot2.png)
+```
+
+:::info Agents don't have a (long term) plan
+
+Often, we prompt an agent to "plan out loud" and the agent responds with a sequence of steps. For example, when a user asks the Desktop Warrior to share its plan to organize the desktop, the agent may respond with a list of actions such as:
+
+1. List all files on the desktop
+2. Identify screenshots
+3. Delete screenshots
+
+However, the agent does not commit to that list of actions. The proposed list of actions becomes part of the history, *biasing* but not *binding* future decisions. Agents are turn based, so each action is chosen fresh based on accumulated history.
+
+:::
+
+## 2.3 Autonomy and Alignment
+
+An agent operates in pursuit of an objective. Autonomy arises when the agent is allowed to make decisions beyond simply effecting a user-specified sequence of actions. Two distinct types of autonomy are worth separating:
+
+- **Goal Autonomy**—The user provides intent, the agent sets the goal.
+  Example: "Clean up my messy desktop". The agent must decide what "clean" means.
+
+- **Plan Autonomy**—The user sets the goal and the agent determines what actions to effect to achieve the goal.
+  Example: "Delete all screenshots on my desktop". The agent must decide what tool to call.
+
+Plan autonomy is relatively safe and common; goal autonomy is more powerful but riskier, as it opens the door to pursuing goals the user never intended.
+
+While agents have autonomy in determining a plan or determining a goal, we need a way to express the fitness of an agent's decisions. We use an uninterpreted fitness function `U` that assigns a numerical value to anything we want to grade, such as the goal, the state of the environment, or the trace of the environment. `Uₐ` denotes the fitness function of the agent, `Uᵤ` denotes the fitness function of the user.
+
+An agent is perfectly aligned if its behavior reliably produces outcomes that match human intent or values:
+
+- **Goal Alignment**—An agent is aligned with the user's goals if the agents score all goals like the user:
+
+  ```
+  for all g₁, g₂: Uₐ(g₁) > Uₐ(g₂) <=> Uᵤ(g₁) > Uᵤ(g₂)
+  ```
+
+- **Plan Alignment**—An agent is aligned with the user's plan if the agent scores all plans the same as the user
+
+  ```
+  for all p₁, p₂: Uₐ(p₁) > Uₐ(p₂) <=> Uᵤ(p₁) > Uᵤ(p₂)
+  ```
+
+- **Outcome Alignment**—And lastly, the agent is aligned with the user if it scores all states the same as the user
+
+  ```
+  for all s₁, s₂: Uₐ(s₁) > Uₐ(s₂) <=> Uᵤ(s₁) > Uᵤ(s₂)
+  ```
+
+For example, if we tell the Desktop Warrior to organize our Desktop, a sensible goal would be to say that the desktop is empty. So user and agent are well aligned. However, if the agent simply decides to delete all files and folders on the desktop, it's not aligned well with the user. The user would probably prefer to simply delete the screenshots and move all documents to the documents folder.
+
+Of course, in practice, an agent is never perfectly aligned. We improve alignment e.g. through constraints that limit the agent's decision space, such as requiring user confirmation before irreversible actions or through techniques like context engineering.
+
+## 2.4 Context Engineering
+
+We can define context engineering, also known as prompt engineering, as a search that selects a system prompt which improves the fitness of an agent according to a fitness function `U`:
+
+```
+for all s₁, s₂: U(𝒜(M, T, s₁)) >= U(𝒜(M, T, s₂))
+```
+
+However, the fitness of an agent is not defined in absolute terms but relative to a role ("You are a helpful assistant") or more generally a goal `g`
+
+```
+for all s₁, s₂: U(𝒜(M, T, s₁), g) >= U(𝒜(M, T, s₂), g)
+```
+
+Context engineering tunes the prompt so that the resulting agent aligns more closely with the user’s goals.
+
+## 2.5 The Desktop Warrior
+
+After establishing the theoretical foundation, we now turn concepts into code by building the Desktop Warrior. The Desktop Warrior is a local AI agent tasked with organizing our desktop.
+
+### 2.5.1 Architecture
+
+The Desktop Warrior is a typescript application using the OpenAI API, running as a single process in your terminal, communicating with the user via stdin and stdout. The agent is a minimal agent loop, which maintains the conversation history and orchestrates the interaction between user, model, and tools. Most tools directly expose an action of the action space such as `ls`, `mv`, `rm`, etc. The environment is the local file system.
+
+For the safe development of an autonomous agent with the tools to effect unbounded, irreversible actions, we simulate, also called mock, tools or environment. Here, we will simulate the environment and run the agent in a docker container that has been prepared with a "messy desktop" (see Listing 2.1).
+
+```dockerfile
+FROM node:alpine
+
+# Create user 'dominik' with home directory
+RUN adduser -D -h /Users/dominik dominik
+
+# Create the filesystem structure
+RUN mkdir -p /Users/dominik/Desktop
+RUN mkdir -p /Users/dominik/Documents
+
+# Create a messy desktop
+WORKDIR /Users/dominik/Desktop
+
+RUN touch "Screenshot 2025-10-01 at 08.30.00.png"
+...
+```
+
+<div className="listing-description">
+  Listing 2.1: Creating a simulated environment for development with Docker
+</div>
+
+### 2.5.2 Crawl
+
+Listing 2.2 illustrates a skeleton agent loop for the Desktop Warrior that serves as our starting point for discussion and development, one that can converse but not call any tools yet.
+
+```typescript
+import OpenAI from "openai";
+import fs from 'fs/promises';
+// peripherals.ts provides simple console I/O utilities
+import { getUserInput } from "./peripherals";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+async function agent(model: string, system: string) {
+  const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [{
+    role: "system", content: system,
+  }];
+
+  while (true) {
+    const prompt = await getUserInput("User: ");
+    messages.push({role: "user", content: prompt});
+
+    const completion = await openai.chat.completions.create({
+      model: model,
+      messages: messages
+    });
+
+    const answer = completion.choices[0]?.message?.content;
+    messages.push({role: "assistant", content: answer});
+    console.log("Assistant: ", answer);
+  }
+}
+
+// Example instantiation
+agent("gpt-5", "You are a helpful assistant");
+```
+
+<div className="listing-description">
+  Listing 2.2: Skeleton agent loop
+</div>
+
+The agent function is parameterized by two values: `model`, specifying the OpenAI model, and `system`, specifying the system prompt. This minimal implementation captures the essence of our formal definition `A = (M, T, s)`, though with an empty toolset for now.
+
+An immediate practical question: Can we swap models (or toolsets, or system prompts)? If we replace GPT-5 with GPT-4, do we get the "same" agent? Formally, these are different agents:
+
+```
+A₁ = (GPT-5, T, s) ≠ A₂ = (GPT-4, T, s)
+```
+
+However, if they produce functionally equivalent outcomes for our use case, we can treat them as equivalent:
+
+```
+A₁ = (GPT-5, T, s) ≈ A₂ = (GPT-4, T, s)
+```
+
+This equivalence matters in practice, for example, when upgrading a model to a newer version or when switching a model to a more capable but more expensive or less capable but less expensive one.
+
+### 2.5.3 Walk
+
+Next we equip the Desktop Warrior with the ability to call tools. To begin, we add a simple tool for reading the contents of the file system and extend the agent loop to handle tool invocation. Most importantly, we must understand the rhythm of LLMs. A prompt is followed by an answer:
+
+```
+h = [(u, a), ...]
+```
+
+When the agent decides to call a tool, the tool call and tool response interleave:
+
+```
+h = [(u, t), (o, a)]
+```
+
+When multiple tools are called in sequence, the rhythm persists:
+
+```
+h = [(u, t), (o, t), ... (o, a)]
+```
+
+Modern LLMs can call multiple tools concurrently within a single turn. This follows a fork-join pattern: tools execute concurrently, but all results must return before the agent continues.
+
+```
+h = [(u, t), (o, t), ... (o, a)], with t = ⟨t₁, ... tₙ⟩ and o = ⟨o₁, ... oₙ⟩
+```
+
+The agent loop must preserve this rhythm: each tool call is followed by a tool output, and only then can the agent continue with either another tool call or a final answer.
+
+
+Listing 2.3 illustrates how to preserve the rhythm with nested loops: an outer loop for user interaction and an inner loop for tool execution.
+
+```typescript
+import OpenAI from "openai";
+import fs from 'fs/promises';
+import { getUserInput } from "./peripherals";
+
+const tools = [
+  {
+    type: "function" as const,
+    function: {
+      name: "ls",
+      description: "list directory contents",
+      parameters: {
+        type: "object",
+        properties: {
+          path: {
+            type: "string",
+            description: "The path to the directory e.g. ~/Desktop",
+          },
+        },
+        required: ["path"],
+      },
+    },
+  },
+];
+
+async function executeTool(toolCall) {
+  const func = toolCall.function.name;
+  const args = JSON.parse(toolCall.function.arguments);
+
+  let toolOutput;
+  if (func === "ls") {
+    toolOutput = await fs.readdir(args.path);
+  } else {
+    toolOutput = "Unknown Tool";
+  }
+
+  return {
+    role: "tool",
+    tool_call_id: toolCall.id,
+    content: JSON.stringify(toolOutput),
+  };
+}
+
+async function agent(model: string, system: string) {
+  const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [{
+    role: "system", content: system,
+  }];
+
+  // outer loop for user interaction
+  while (true) {
+    const prompt = await getUserInput("User: ");
+    messages.push({ role: "user", content: prompt });
+
+    // inner loop for tool execution
+    let agentTurn = true;
+    while (agentTurn) {
+      const completion = await openai.chat.completions.create({
+        model: model,
+        messages: messages,
+        tools: tools,
+      });
+
+      const response = completion.choices[0]?.message;
+
+      messages.push(response);
+
+      if (response.tool_calls) {
+        // when thinking out loud, print thoughts
+        if (response.content) {
+          console.log(response.content);
+        }
+
+        // execute tool calls
+        for (const toolCall of response.tool_calls) {
+          messages.push(await executeTool(toolCall));
+        }
+        agentTurn = true;
+      } else {
+        // Regular response - print and exit inner loop
+        console.log("Assistant:", response.content);
+        agentTurn = false;
+      }
+    }
+  }
+}
+
+// Example instantiation
+agent("gpt-5", "You are a helpful assistant with access to the file system");
+```
+
+<div className="listing-description">
+  Listing 2.3: Agent loop illustrating both the outer agent loop as well as the inner tool calling loop
+</div>
+
+The Desktop Warrior can now see the filesystem through ls and perform multiple tool calls in sequence before returning an answer to the user.
+
+### 2.5.4 Run
+
+Reading the snippet, most complexity revolves around tool calling: we must tell the model which tools exist, receive the chosen calls, execute them—preferably concurrently when possible—and feed the results back to the model. Additionally, since any tool call is subject to failure, we have to worry about failure detection (e.g. catching exceptions or detecting timeouts) and failure mitigation (e.g. retrying the call).
+
+These concerns are so common, that an entire ecosystem has rallied around the Model Context Protocol (MCP), an open standard that supports (among other concerns) tool calling. However, in this chapter, we will not use MCP but explore the core functionality directly: In effect, MCP is a registry with the ability to register tools and call them by name with the provided arguments (see Listing 2.4).
+
+```typescript
+class Tool {
+  name: string;
+  desc: string;
+  args: object;
+  func: Function;
+  requiresConfirmation: boolean;
+
+  constructor(name: string, desc: string, args: object, func: Function, requiresConfirmation: boolean) {
+    // ...
+  }
+}
+
+interface IRegistry {
+  // Registration
+  register(tool: Tool): void;
+  // Batch Execution
+  execute(toolCalls: ToolCall[], options?: {
+      confirm?: (ToolCall) => Promise<boolean>;
+  }): Promise<ToolResponse[]>;
+}
+```
+
+<div className="listing-description">
+  Listing 2.4: Tool registry interface
+</div>
+
+Of course, we are not limited to track only the information the LLM actually requires, we are free to build our registry with our requirements in mind. For example, we can classify tools by their impact and add guardrails such as human confirmation around the tool call.
+
+:::note
+You cannot enforce constraints on tools "inside" the model. For example, even if you system prompt states that the assistant is not allowed to delete a folder, you do not have a guarantee that the assistant does not generate a call
+:::
+
+Listing 2.5 illustrates a simple registry where we can flag a tool call as needing confirmation.
+
+```typescript
+class ToolRegistry implements IRegistry {
+  private tools = new Map<string, Tool>();
+
+  register(tool: Tool): void {
+    this.tools.set(tool.name, tool);
+  }
+
+  async execute(
+    toolCalls: ToolCall[],
+    options?: { confirm?: (tool: ToolCall) => Promise<boolean> }
+  ): Promise<ToolResponse[]> {
+    // Execute tool calls concurrently
+    const results = await Promise.allSettled(
+      toolCalls.map(async (toolCall) => {
+        try {
+          const tool = this.tools.get(toolCall.function.name);
+          if (!tool) {
+            throw new Error(`Unknown tool: ${toolCall.function.name}`);
+          }
+          // Check if confirmation needed
+          if (tool.requiresConfirmation && options?.confirm) {
+            const approved = await options.confirm(toolCall);
+            if (!approved) {
+              throw new Error("Tool execution rejected by user");
+            }
+          }
+          // Parse arguments and execute
+          const args = JSON.parse(toolCall.function.arguments);
+          const result = await tool.func(args);
+          // Return success response
+          return {
+            role: "tool" as const,
+            tool_call_id: toolCall.id,
+            content: JSON.stringify(result)
+          };
+
+        } catch (error) {
+          // Return error to LLM for handling
+          return {
+            role: "tool" as const,
+            tool_call_id: toolCall.id,
+            content: JSON.stringify({
+              error: true,
+              message: error instanceof Error ? error.message : String(error),
+              tool: toolCall.function.name
+            })
+          };
+        }
+      })
+    );
+
+    // Extract responses from settled promises
+    return results.map((result, index) => {
+      if (result.status === 'fulfilled') {
+        return result.value;
+      } else {
+        // This shouldn't happen due to our try-catch, but handle it anyway
+        return {
+          role: "tool" as const,
+          tool_call_id: toolCalls[index].id,
+          content: JSON.stringify({
+            error: true,
+            message: "Unexpected execution failure",
+            details: result.reason
+          })
+        };
+      }
+    });
+  }
+
+  getTools(): Array<any> {
+    return Array.from(this.tools.values()).map(tool => ({
+      type: "function",
+      function: {
+        name: tool.name,
+        description: tool.desc,
+        parameters: tool.args
+      }
+    }));
+  }
+}
+```
+
+<div className="listing-description">
+  Listing 2.5: Tool registry
+</div>
+
+Listing 2.6 illustrates the final result
+
+```typescript
+import OpenAI from "openai";
+import fs from 'fs/promises';
+import { getUserInput } from "./peripherals";
+
+const registry = new ToolRegistry();
+
+registry.register(new Tool(
+  "ls",
+  "list directory contents",
+  {
+    type: "object",
+    properties: {
+      path: {
+        type: "string",
+        description: "The path to the directory e.g. ~/Desktop",
+      },
+    },
+    required: ["path"],
+  },
+  async (args) => await fs.readdir(args.path),
+  false  // doesn't need confirmation
+));
+
+async function agent(model: string, system: string) {
+  const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [{
+    role: "system", content: system,
+  }];
+
+  // outer loop for user interaction
+  while (true) {
+    const prompt = await getUserInput("User: ");
+    messages.push({ role: "user", content: prompt });
+
+    // inner loop for tool execution
+    let agentTurn = true;
+    while (agentTurn) {
+      const completion = await openai.chat.completions.create({
+        model: model,
+        messages: messages,
+        tools: registry.getTools(),  // Get tools from registry
+      });
+
+      const response = completion.choices[0]?.message;
+      if (!response) break;
+
+      messages.push(response);
+
+      if (response.tool_calls) {
+        // when thinking out loud, print thoughts
+        if (response.content) {
+          console.log("Assistant (thinking):", response.content);
+        }
+
+        // execute all tool calls through registry
+        const toolResponses = await registry.execute(
+          response.tool_calls,
+          {
+            confirm: async (toolCall) => {
+              console.log(`The assistant wants to call ${JSON.stringify(toolCall)}`);
+              return await getUserInput("Allow this action? (y/n): ") === 'y';
+            }
+          }
+        );
+        messages.push(...toolResponses);
+
+        agentTurn = true;
+      } else {
+        // Regular response - print and exit inner loop
+        console.log("Assistant:", response.content);
+        agentTurn = false;
+      }
+    }
+  }
+}
+
+<div className="listing-description">
+  Listing 2.6: The Desktop Warrior
+</div>
+
+
+```
+
+At this point, we face a difficult decision: We need to balance between alignment and autonomy. On the one hand, we could continue to equip the agent with additional tools like `mv`, `cp`, or `rm`, possibly restricting tools (e.g. sanitize or filter path) or modifying tools (e.g. taking backups before deleting). On the other hand, we could provide the agent with nearly unfettered access (only restricted by a confirmation step) to the file system.
+
+```typescript
+import { execSync } from 'child_process';
+
+const registry = new ToolRegistry();
+
+registry.register(new Tool(
+  "bash",
+  "execute shell commands",
+  {
+    type: "object",
+    properties: {
+      command: {
+        type: "string",
+        description: "The shell command to execute",
+      },
+    },
+    required: ["command"],
+  },
+  async (args) => {
+    try {
+      const stdout = execSync(args.command, {
+        encoding: "utf8",
+        timeout: 10000,
+        maxBuffer: 1024 * 1024,
+      });
+      return {
+        stdout: stdout.toString(),
+        stderr: "",
+        exitCode: 0,
+      };
+    } catch (error: any) {
+      return {
+        stdout: error.stdout?.toString() || "",
+        stderr: error.stderr?.toString() || error.message,
+        exitCode: error.status || 1,
+      };
+    }
+  },
+  true  // requires confirmation
+));
+```
+
+<div className="listing-description">
+  Listing 2.7: The Desktop Warrior, unleashed
+</div>
+
+Which option you choose depends on your requirements and your approach to balancing risk and reward.
+
+### 2.5.5 Fly?
+
+We’ve successfully built the Desktop Warrior, a local agent capable of organizing our filesystem through natural conversation. While significant complexity remains to make the local agent production-ready, we’ve benefited from a crucial simplification: the ambient, continuous environment provided by the operating system.
+
+Our agent runs as a single process, relying on decades of operating system engineering. Processes come with stdin, stdout, and stderr, their state lives in memory, and whenever the agent blocks—waiting for user input or a tool call—the OS wakes it up at the right time, resuming execution as if no interruption had occurred.
+
+In short, we inherit decades of POSIX engineering: message routing, synchronization, and state management are ambient, continuous, and invisible—allowing us to focus on the agent logic itself.
+
+But what happens when we want to host the Desktop Warrior as a service, accessible from anywhere? The moment we lift the agent out of the terminal and into the cloud, the ground falls away. The very features that made our local loop feel natural are no longer guaranteed. This is where the reality of distributed systems asserts itself, layering new dimensions of complexity on top of the inherent complexity of agentic applications.
+
+Get ready for takeoff.
+
+## 2.6 Summary
+
+- An agent is a tuple of model, tools, and system prompt that operates autonomously in pursuit of objectives.
+- An agent instance extends an agent with conversation history.
+- Environments are state machines with actions, outputs, and transitions.
+- Agent instances interact with the environment only via tools.
+- Agents construct world models from partial observations, never directly accessing the true environment state.
+- Goals are predicates over states that define desirable outcomes for the agent to achieve.
+- Plans emerge incrementally through turn-based generation rather than being committed to in advance.
+- Autonomy manifests as goal autonomy (determining objectives) and plan autonomy (determining actions to achieve goals).
+- Alignment measures whether agent behavior matches human expectations across goals, plans, and outcomes.
+- The Desktop Warrior implements these ideas (agent loop, tool registry, confirmations) and highlights the leap from local simplicity to distributed complexity

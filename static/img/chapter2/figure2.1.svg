@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" viewBox="-.5 -45 791 360.5" width="791" height="360.5">
+  <defs>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="#353f58">
+      <g>
+        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+  </defs>
+  <g id="Chapter-2" stroke-opacity="1" fill-opacity="1" stroke-dasharray="none" fill="none" stroke="none">
+    <title>Chapter-2</title>
+    <rect fill="white" x="-.5" y="-45" width="791" height="360.5"/>
+    <g id="Chapter-2_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_16">
+        <path d="M 290 0 L 500 0 C 505.52285 33817688e-23 510 4.4771525 510 10 L 510 305 C 510 310.52285 505.52285 315 500 315 L 290 315 C 284.47715 315 280 310.52285 280 305 L 280 10 C 280 4.4771525 284.47715 -67635375e-23 290 0 Z" fill="#f8f8ff"/>
+        <path d="M 290 0 L 500 0 C 505.52285 33817688e-23 510 4.4771525 510 10 L 510 305 C 510 310.52285 505.52285 315 500 315 L 290 315 C 284.47715 315 280 310.52285 280 305 L 280 10 C 280 4.4771525 284.47715 -67635375e-23 290 0 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4.0,4.0" stroke-width="1"/>
+      </g>
+      <g id="Graphic_15">
+        <rect x="305" y="25" width="180" height="120" fill="white"/>
+        <rect x="305" y="25" width="180" height="120" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(310 66.552)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="55.064" y="15" xml:space="preserve">Desktop</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="59.232" y="33.448" xml:space="preserve">Warrior</tspan>
+        </text>
+      </g>
+      <g id="Graphic_14">
+        <circle cx="230" cy="85" r="25.0000399475474" fill="white"/>
+        <circle cx="230" cy="85" r="25.0000399475474" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_13">
+        <rect x="0" y="25" width="180" height="120" fill="white"/>
+        <rect x="0" y="25" width="180" height="120" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(5 75.776)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="68.264" y="15" xml:space="preserve">User</tspan>
+        </text>
+      </g>
+      <g id="Graphic_12">
+        <circle cx="560" cy="85" r="25.0000399475474" fill="white"/>
+        <circle cx="560" cy="85" r="25.0000399475474" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_11">
+        <rect x="610" y="25" width="180" height="120" fill="white"/>
+        <rect x="610" y="25" width="180" height="120" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(615 66.552)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="72.56" y="15" xml:space="preserve">File</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="58.176" y="33.448" xml:space="preserve">System</tspan>
+        </text>
+      </g>
+      <g id="Graphic_10">
+        <path d="M 314 170 L 476 170 C 480.97056 170 485 174.02944 485 179 L 485 281 C 485 285.97056 480.97056 290 476 290 L 314 290 C 309.02944 290 305 285.97056 305 281 L 305 179 C 305 174.02944 309.02944 170 314 170 Z" fill="white"/>
+        <path d="M 314 170 L 476 170 C 480.97056 170 485 174.02944 485 179 L 485 281 C 485 285.97056 480.97056 290 476 290 L 314 290 C 309.02944 290 305 285.97056 305 281 L 305 179 C 305 174.02944 309.02944 170 314 170 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(310 220.776)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="55.656" y="15" xml:space="preserve">Memory</tspan>
+        </text>
+      </g>
+      <g id="Line_9">
+        <line x1="180" y1="85" x2="204.99999" y2="85" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_8">
+        <line x1="255" y1="85" x2="305" y2="85" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_7">
+        <line x1="485" y1="85" x2="535" y2="85" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_6">
+        <line x1="585" y1="85" x2="610" y2="85" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_5">
+        <line x1="395" y1="170" x2="395" y2="145" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_17">
+        <text transform="translate(145 -40)" fill="black">
+          <tspan font-family="Helvetica Neue" font-weight="bold" font-size="16" fill="black" x="4.048" y="16" xml:space="preserve">Organize my desktop</tspan>
+        </text>
+      </g>
+      <g id="Line_19">
+        <line x1="230" y1="-15.535889" x2="230" y2="50.09999" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_20">
+        <text transform="translate(415 -40)" fill="black">
+          <tspan font-family="Helvetica Neue" font-weight="bold" font-size="16" fill="black" x="54.96" y="16" xml:space="preserve">File System Commands</tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" fill="black" x="104.414" y="31.46411" xml:space="preserve">e.g. ls, mv, rm</tspan>
+        </text>
+      </g>
+      <g id="Line_21">
+        <line x1="560" y1="-.17189026" x2="560" y2="50.09999" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+    </g>
+  </g>
+</svg>

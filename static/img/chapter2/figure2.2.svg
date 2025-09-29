@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" viewBox="-795.5 2870 1081 475.5" width="1081" height="475.5">
+  <defs>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="#353f58">
+      <g>
+        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+  </defs>
+  <g id="Chapter-2" stroke-opacity="1" fill-opacity="1" stroke-dasharray="none" fill="none" stroke="none">
+    <title>Chapter-2</title>
+    <rect fill="white" x="-795.5" y="2870" width="1081" height="475.5"/>
+    <g id="Chapter-2_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_277">
+        <rect x="-795" y="2925" width="120" height="60" fill="white"/>
+        <rect x="-795" y="2925" width="120" height="60" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(-790 2945.776)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="33.96" y="15" xml:space="preserve">Agent</tspan>
+        </text>
+      </g>
+      <g id="Graphic_276">
+        <rect x="-615" y="2925" width="120" height="60" fill="white"/>
+        <rect x="-615" y="2925" width="120" height="60" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(-610 2945.776)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="40.336" y="15" xml:space="preserve">Tool</tspan>
+        </text>
+      </g>
+      <g id="Graphic_275">
+        <rect x="-435" y="2925" width="120" height="60" fill="white"/>
+        <rect x="-435" y="2925" width="120" height="60" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(-430 2945.776)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="10.24" y="15" xml:space="preserve">Environment</tspan>
+        </text>
+      </g>
+      <g id="Line_235">
+        <line x1="-135" y1="2985" x2="-135" y2="3285" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_236">
+        <line x1="45" y1="2985" x2="45" y2="3285" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_237">
+        <line x1="225" y1="2985" x2="225" y2="3285" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_200">
+        <rect x="-195" y="2925" width="120" height="60" fill="white"/>
+        <rect x="-195" y="2925" width="120" height="60" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(-190 2945.776)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="33.96" y="15" xml:space="preserve">Agent</tspan>
+        </text>
+      </g>
+      <g id="Graphic_199">
+        <rect x="-15" y="2925" width="120" height="60" fill="white"/>
+        <rect x="-15" y="2925" width="120" height="60" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(-10 2945.776)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="40.336" y="15" xml:space="preserve">Tool</tspan>
+        </text>
+      </g>
+      <g id="Graphic_198">
+        <rect x="165" y="2925" width="120" height="60" fill="white"/>
+        <rect x="165" y="2925" width="120" height="60" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(170 2945.776)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="10.24" y="15" xml:space="preserve">Environment</tspan>
+        </text>
+      </g>
+      <g id="Graphic_213"/>
+      <g id="Graphic_212"/>
+      <g id="Graphic_211"/>
+      <g id="Graphic_210"/>
+      <g id="Line_209">
+        <line x1="-134" y1="3020.5" x2="35.1" y2="3020.5" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_208">
+        <line x1="46" y1="3060.5" x2="215.1" y2="3060.5" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_214"/>
+      <g id="Graphic_215"/>
+      <g id="Line_216">
+        <line x1="225" y1="3100.5" x2="55.9" y2="3100.5" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_222"/>
+      <g id="Graphic_221"/>
+      <g id="Line_220">
+        <line x1="46" y1="3170.5" x2="215.1" y2="3170.5" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_219"/>
+      <g id="Graphic_218"/>
+      <g id="Line_217">
+        <line x1="225" y1="3210.5" x2="55.9" y2="3210.5" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_229"/>
+      <g id="Graphic_230"/>
+      <g id="Line_231">
+        <line x1="45" y1="3250.5" x2="-124.1" y2="3250.5" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_232">
+        <rect x="-195" y="3285" width="120" height="60" fill="white"/>
+        <rect x="-195" y="3285" width="120" height="60" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(-190 3305.776)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="33.96" y="15" xml:space="preserve">Agent</tspan>
+        </text>
+      </g>
+      <g id="Graphic_233">
+        <rect x="-15" y="3285" width="120" height="60" fill="white"/>
+        <rect x="-15" y="3285" width="120" height="60" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(-10 3305.776)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="40.336" y="15" xml:space="preserve">Tool</tspan>
+        </text>
+      </g>
+      <g id="Graphic_234">
+        <rect x="165" y="3285" width="120" height="60" fill="white"/>
+        <rect x="165" y="3285" width="120" height="60" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(170 3305.776)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="10.24" y="15" xml:space="preserve">Environment</tspan>
+        </text>
+      </g>
+      <g id="Graphic_238">
+        <text transform="translate(-790 2875)" fill="black">
+          <tspan font-family="Helvetica Neue" font-weight="bold" font-size="18" fill="black" x="169.183" y="18" xml:space="preserve">Direct Mapping</tspan>
+        </text>
+      </g>
+      <g id="Graphic_239">
+        <text transform="translate(-190 2875)" fill="black">
+          <tspan font-family="Helvetica Neue" font-weight="bold" font-size="18" fill="black" x="132.724" y="18" xml:space="preserve">Compositional Mapping</tspan>
+        </text>
+      </g>
+      <g id="Line_240">
+        <line x1="-255" y1="2925" x2="-255" y2="3345" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4.0,4.0" stroke-width="1"/>
+      </g>
+      <g id="Graphic_242">
+        <text transform="translate(-130 2999.664)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" fill="black" x="59.175414" y="13" xml:space="preserve">Tool Inv </tspan>
+          <tspan font-family="Roboto Mono" font-size="12" fill="black" y="13" xml:space="preserve">t</tspan>
+        </text>
+      </g>
+      <g id="Graphic_243">
+        <text transform="translate(-130 3228.664)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" fill="black" x="56.733414" y="13" xml:space="preserve">Tool Res </tspan>
+          <tspan font-family="Roboto Mono" font-size="12" fill="black" y="13" xml:space="preserve">o</tspan>
+        </text>
+      </g>
+      <g id="Graphic_244">
+        <text transform="translate(50 3038.664)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" fill="black" x="49.44911" y="13" xml:space="preserve">Action Inv </tspan>
+          <tspan font-family="Roboto Mono" font-size="12" fill="black" y="13" xml:space="preserve">a</tspan>
+          <tspan font-family="Menlo" font-size="12" fill="black" y="13" xml:space="preserve">₁</tspan>
+        </text>
+      </g>
+      <g id="Graphic_245">
+        <text transform="translate(50 3149.664)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" fill="black" x="50.58583" y="13" xml:space="preserve">Action Inv </tspan>
+          <tspan font-family="Roboto Mono" font-size="12" fill="black" y="13" xml:space="preserve">a</tspan>
+          <tspan font-family=".SF NS" font-size="12" fill="black" y="13" xml:space="preserve">ₙ</tspan>
+        </text>
+      </g>
+      <g id="Graphic_246">
+        <text transform="translate(50 3078.664)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" fill="black" x="47.00711" y="13" xml:space="preserve">Action Res </tspan>
+          <tspan font-family="Roboto Mono" font-size="12" fill="black" y="13" xml:space="preserve">y</tspan>
+          <tspan font-family="Menlo" font-size="12" fill="black" y="13" xml:space="preserve">₁</tspan>
+        </text>
+      </g>
+      <g id="Graphic_247">
+        <text transform="translate(50 3188.664)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" fill="black" x="48.14383" y="13" xml:space="preserve">Action Res </tspan>
+          <tspan font-family="Roboto Mono" font-size="12" fill="black" y="13" xml:space="preserve">y</tspan>
+          <tspan font-family=".SF NS" font-size="12" fill="black" y="13" xml:space="preserve">ₙ</tspan>
+        </text>
+      </g>
+      <g id="Line_280">
+        <line x1="-735" y1="2985" x2="-735" y2="3285" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_279">
+        <line x1="-555" y1="2985" x2="-555" y2="3285" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_278">
+        <line x1="-375" y1="2985" x2="-375" y2="3285" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_274"/>
+      <g id="Graphic_273"/>
+      <g id="Graphic_272"/>
+      <g id="Graphic_271"/>
+      <g id="Line_270">
+        <line x1="-734" y1="3020.5" x2="-564.9" y2="3020.5" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_269">
+        <line x1="-554" y1="3060.5" x2="-384.9" y2="3060.5" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_268"/>
+      <g id="Graphic_267"/>
+      <g id="Graphic_265"/>
+      <g id="Graphic_264"/>
+      <g id="Graphic_262"/>
+      <g id="Graphic_261"/>
+      <g id="Line_260">
+        <line x1="-375" y1="3210.5" x2="-544.1" y2="3210.5" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_259"/>
+      <g id="Graphic_258"/>
+      <g id="Line_257">
+        <line x1="-555" y1="3250.5" x2="-724.1" y2="3250.5" marker-end="url(#FilledArrow_Marker)" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_256">
+        <rect x="-795" y="3285" width="120" height="60" fill="white"/>
+        <rect x="-795" y="3285" width="120" height="60" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(-790 3305.776)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="33.96" y="15" xml:space="preserve">Agent</tspan>
+        </text>
+      </g>
+      <g id="Graphic_255">
+        <rect x="-615" y="3285" width="120" height="60" fill="white"/>
+        <rect x="-615" y="3285" width="120" height="60" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(-610 3305.776)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="40.336" y="15" xml:space="preserve">Tool</tspan>
+        </text>
+      </g>
+      <g id="Graphic_254">
+        <rect x="-435" y="3285" width="120" height="60" fill="white"/>
+        <rect x="-435" y="3285" width="120" height="60" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(-430 3305.776)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="10.24" y="15" xml:space="preserve">Environment</tspan>
+        </text>
+      </g>
+      <g id="Graphic_253">
+        <text transform="translate(-730 2999.664)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" fill="black" x="59.175414" y="13" xml:space="preserve">Tool Inv </tspan>
+          <tspan font-family="Roboto Mono" font-size="12" fill="black" y="13" xml:space="preserve">t</tspan>
+        </text>
+      </g>
+      <g id="Graphic_252">
+        <text transform="translate(-730 3228.664)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" fill="black" x="56.733414" y="13" xml:space="preserve">Tool Res </tspan>
+          <tspan font-family="Roboto Mono" font-size="12" fill="black" y="13" xml:space="preserve">o</tspan>
+        </text>
+      </g>
+      <g id="Graphic_251">
+        <text transform="translate(-550 3038.664)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" fill="black" x="53.061414" y="13" xml:space="preserve">Action Inv </tspan>
+          <tspan font-family="Roboto Mono" font-size="12" fill="black" y="13" xml:space="preserve">a</tspan>
+        </text>
+      </g>
+      <g id="Graphic_248">
+        <text transform="translate(-550 3188.664)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="12" fill="black" x="50.619414" y="13" xml:space="preserve">Action Res </tspan>
+          <tspan font-family="Roboto Mono" font-size="12" fill="black" y="13" xml:space="preserve">y</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>
