@@ -252,3 +252,27 @@ pre,
     font-family:
         "JetBrains Mono", "Fira Code", "Monaco", "Consolas", monospace !important;
 }
+
+/* Ensure table fills space and columns stay equal width */
+.theme-doc-markdown table.equal-cols {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.theme-doc-markdown table.equal-cols th,
+.theme-doc-markdown table.equal-cols td {
+    width: calc(100% / 3);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    vertical-align: top;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    border: 1px solid var(--ifm-table-border-color);
+}
+
+/* Optional: keep header style consistent with theme */
+.theme-doc-markdown table.equal-cols th {
+    background-color: var(--ifm-table-head-background);
+    font-weight: 600;
+}

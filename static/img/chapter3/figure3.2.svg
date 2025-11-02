@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xl="http://www.w3.org/1999/xlink" viewBox="-1 -681 902 302" width="902" height="302">
+  <defs/>
+  <g id="Chapter-2" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill-opacity="1" fill="none">
+    <title>Chapter-2</title>
+    <rect fill="white" x="-1" y="-681" width="902" height="302"/>
+    <g id="Chapter-2_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_522">
+        <path d="M 10 -680 L 890 -680 C 895.5228 -680 900 -675.52285 900 -670 L 900 -570 C 900 -564.47715 895.5228 -560 890 -560 L 10 -560 C 4.4771525 -560 67635375e-23 -564.47715 0 -570 L 53290705e-22 -670 C 6005424e-21 -675.52285 4.4771525 -680 10 -680 Z" fill="white"/>
+        <path d="M 10 -680 L 890 -680 C 895.5228 -680 900 -675.52285 900 -670 L 900 -570 C 900 -564.47715 895.5228 -560 890 -560 L 10 -560 C 4.4771525 -560 67635375e-23 -564.47715 0 -570 L 53290705e-22 -670 C 6005424e-21 -675.52285 4.4771525 -680 10 -680 Z" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(5 -653.172)" fill="#353f58">
+          <tspan font-family="Helvetica Neue" font-size="32" fill="#353f58" x="402.92" y="30" xml:space="preserve">Agent</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="#353f58" x="274.736" y="62.895996" xml:space="preserve">Research Agent “What are distributed systems”</tspan>
+        </text>
+      </g>
+      <g id="Graphic_521">
+        <path d="M 10 -500 L 890 -500 C 895.5228 -500 900 -495.52285 900 -490 L 900 -390 C 900 -384.47715 895.5228 -380 890 -380 L 10 -380 C 4.4771525 -380 67635375e-23 -384.47715 0 -390 L 53290705e-22 -490 C 6005424e-21 -495.52285 4.4771525 -500 10 -500 Z" fill="#353f58"/>
+        <path d="M 10 -500 L 890 -500 C 895.5228 -500 900 -495.52285 900 -490 L 900 -390 C 900 -384.47715 895.5228 -380 890 -380 L 10 -380 C 4.4771525 -380 67635375e-23 -384.47715 0 -390 L 53290705e-22 -490 C 6005424e-21 -495.52285 4.4771525 -500 10 -500 Z" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(5 -473.172)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="32" fill="white" x="387.224" y="30" xml:space="preserve">Process</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="white" x="413.28" y="62.895996" xml:space="preserve">Pid #954</tspan>
+        </text>
+      </g>
+      <g id="Line_516">
+        <line x1="0" y1="-530.5" x2="900" y2="-530.5" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="16.0,10.0" stroke-width="2"/>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,600 @@
+---
+id: chapter-3
+title: 3. Building a Distributed Agent
+sidebar_label: Chapter 3
+last_update:
+  date: "11-01-2025"
+---
+
+### This chapter covers
+
+- From the terminal to the cloud
+- Distributed computation
+- Distributed Async Await
+- The Research Agent
+
+:::info Build with Confidence
+Building Agents? Learn more about Resonate's [Distributed Async Await](https://resonatehq.io), a dead simple programming model for building reliable agentic applications.
+
+Join the [Discord](https://resonatehq.io/discord)
+:::
+
+When you build an agentic application that runs on your machine, you enjoy the simplicity of building a local application. When you build a distributed agentic application, you face the challenges of building a distributed application. This gap separates proof of concept from production.
+
+In Chapter 2, we built the Desktop Warrior, a local agent living in a single process. That process boundary quietly solved some of the hardest problems in systems design: identity, oneness, continuity in time and space. The process was the agent. We never had to ask "Which Desktop Warrior?" because the agent instance was identified by the process. We never had to wonder "What does Desktop Warrior remember?" because the agent instance's memory was contained in the process's memory.
+
+When we move from local to global, that boundary disappears. One logical agent instance may span many physical processes across time and space. What felt continuous becomes fragmented. What felt durable becomes ephemeral.
+
+In this chapter, we will build The Research Agent—a distributed, recursive agent that breaks a research topic into subtopics, researches each subtopic recursively, and synthesizes the results. Recursion is a key property: one agent instance spawns additional instances, creating a sprawling multi-agent system. From a simple code base, we’ll uncover the core challenges of distributed computation, coordination, and recovery (see Figure 3.1).
+
+<br />
+
+![Figure 3.1](/img/chapter3/figure3.1.mov)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  Figure 3.1: The distributed, recursive Research Agent
+</div>
+
+<br />
+
+:::info Concurrent and Distributed Systems in a Nutshell
+
+The defining characteristic of *concurrency* is *partial order*. In a concurrent system, we do not know what will *happen* next. To mitigate concurrency, we employ coordination. *Coordination* refers to constraining possible schedules to desirable schedules, while *synchronization* refers to enforcing that constraint. The fundamental operation of synchronization is to wait.
+
+```
+E₁ | E₂ ≡ (E₁ ; E₂) ∨ (E₂ ; E₁)
+```
+
+<div className="listing-description">
+Ideally, two executions that run concurrently should produce the same result as running one after the other
+</div>
+
+The defining characteristic of *distribution* is *partial failure*. In a distributed system, we do not know what will *fail* next. To mitigate distribution, we employ recovery. *Recovery* refers to extending partial schedules to complete schedules, while *supervision* refers to enforcing that extension. The fundamental operation of supervision is to restart.
+
+```
+E | ⚡️ ≡ E
+```
+<div className="listing-description">
+Ideally, a process that may fail should produce the same result as running to completion
+</div>
+
+:::
+
+## 3.1 Moving from the Terminal to the Cloud
+
+Running applications locally is a joy. My laptop rarely restarts, my terminal window never crashes, and my terminal tabs stay open for days, sometimes weeks. The process running in that tab is still there, faithfully executing or patiently waiting for the next input, ready to continue as if no time has passed. Sure, in theory, the process could crash at any moment, but in practice, we hardly think about that possibility. Failure is an edge case, not the norm (see Figure 3.2).
+
+<br />
+
+![Figure 3.2](/img/chapter3/figure3.2.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  Figure 3.2: A logical execution mapping one-to-one to a physical execution. One-to-one relationships simplify reasoning about objects: each uniquely identifies the other, effectively collapsing both into one.
+</div>
+
+<br />
+
+Distributed systems shatter this simplicity. Your application no longer lives in one process but spans many processes across machines, data centers, and continents, executing over minutes, hours, days, or weeks. Failure is no longer an edge case but becomes the regular case when processes crash and networks partition (see Figure 3.3).
+
+<br />
+
+![Figure 3.3](/img/chapter3/figure3.3.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  Figure 3.3: A logical execution mapping one-to-many to multiple physical executions. One-to-many relationships complicate reasoning about objects: one no longer identifies the other, effectively exploding one into many.
+</div>
+
+<br />
+
+Before building the Research Agent, we need a model of computations that spans space and time.
+
+:::info Distributed in Space and Time
+When we think of distribution, we think of *distribution in space*: one execution invokes another execution on another location (another process or machine). The invoke creates a cut in space.
+
+But we also must think of *distribution in time*: one execution awaits another execution, suspending while waiting and subsequently resuming. The await creates a cut in time.
+:::
+
+### 3.1.1 Model of Computation
+
+<!--
+The programming model expresses coordination constraints and recovery boundaries while the execution model enforces coordination constraints and recovery boundaries.
+
+-->
+
+Computation is a graph with nodes representing executions and edges representing relationships or dependencies between executions.
+
+For example, the root execution in Figure 3.1, representing the topic "What are distributed systems", spawns two executions representing the topics "What is scalability" and "What is reliability". Here, an edge between executions represents invoking another execution and awaiting its result.
+
+The root of the graph has a dual nature: The root represents both the initial execution and the entire collection of executions spawned during its lifetime. This collection, the complete graph of executions, is often referred to as a workflow.
+
+This pattern is recursive: every execution represents itself and the collection of executions spawned during its lifetime. Depending on context, we might refer to the complete graph as "a workflow", a subgraph as "a workflow", or, to emphasize the hierarchy, as "a sub-workflow" or "a child workflow".
+
+#### Logical vs Physical View
+
+Consider what happens when the Research Agent spawns an agent to research a subtopic. The logical execution—"What are distributed systems"—exists independent of any physical executions. Yet, the logical execution must map to a physical execution (a function running in a process running on a machine) to make progress. This mapping is not permanent. The logical execution may map to different physical executions over time. For example, when a crash occurs, recovery remaps the logical execution to a new physical execution.
+
+One logical execution maps to one or more physical executions. We say that the logical execution is *composed* of its physical executions and the physical executions *contribute* to the logical execution.
+
+**This logical–physical split underpins how we reason about identity, coordination, and recovery.**
+
+#### Identity
+
+A logical execution has an external, assigned, identity (an identifier such as `research-agent-1` or `r.1`) and is not bound to a location. A physical execution has an internal, inherent, identity (its stackframe in a process on a machine) and is bound to a single location (that stackframe in that process on that machine).
+
+#### Coordination
+
+Our model of coordination is based on two fundamental operations: invocation and awaiting. That matches our daily experience where a function calls another function, either locally or remotely (HTTP, gRPC), and (eventually) awaits a result.
+
+An execution can invoke other executions: When an execution, the caller, invokes another execution, the callee, the callee executes concurrently with the caller—both proceed independently. The caller may invoke the callee locally, called `run`, or remotely, called `rpc`:
+
+- `run`. If a caller invokes the callee locally, the physical execution mapping to the callee is guaranteed to run on the same location as the physical execution mapping to the caller.
+
+- `rpc`. If a caller invokes the callee remotely, the physical execution mapping to the callee may run on the same or a different location as the physical execution mapping to the caller.
+
+An execution can await another execution: When a caller awaits a callee and the callee has not yet completed, the caller suspends, capturing its context as a continuation, until the callee completes and resumes the continuation.
+
+By recursively invoking and awaiting, a distributed execution expands into the distributed call graph—a graph that may span hundreds of executions across dozens of locations.
+
+Figure 3.4 illustrates a distributed call graph. Boxes denote executions. Nested boxes denote computations, a group of executions that share a locality. Starting from the root, executions connected by run execute in the same computation while executions connected by rpc execute in a different computation.
+
+<br />
+
+![Figure 3.4](/img/chapter3/figure3.4.mov)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  Figure 3.4: A distributed call graph showing computations (nested boxes) connected by local invocations (run) and partitioned by remote invocations (rpc)
+</div>
+
+#### Recovery
+
+Our model of recovery is based on one fundamental operation: restart. That matches our daily experience where a failed HTTP request gets retried or a crashed process or a crashed machine gets restarted.
+
+When a physical execution fails (e.g. the execution crashes, the process crashes, or the machine crashes), the system starts a new physical execution.
+
+However, that raises an essential question: When an execution crashes, what gets restarted?
+
+**Coarse Grained**
+
+If we follow the familiar model of chained HTTP calls—an HTTP request that calls another HTTP request that calls another HTTP request—then a failure anywhere in the chain forces a restart from the failure point. This approach works for short-lived, cheap executions, but collapses under long-lived, expensive executions.
+
+Figure 3.5 shows this coarse-grained recovery model. When `E₂` crashes, the system restarts both `E₂` and `E₃` and everything downstream.
+
+<br />
+
+![Figure 3.5](/img/chapter3/figure3.5.mov)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  Figure 3.5: Coarse-grained recovery: `E₂` crashes and everything downstream of `E₂` will be restarted
+</div>
+
+<br />
+
+**Fine-Grained Recovery**
+
+We can do better by introducing recovery boundaries. The key insight: computations (rpc invocations) create cuts in space—they also create recovery boundaries: When an execution crashes, only the executions within its computation restart. Executions in different computations (across rpc boundaries) continue running.
+
+Figure 3.6 illustrates the same execution structure but with fine-grained recovery
+<br />
+
+![Figure 3.6](/img/chapter3/figure3.6.mov)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  Figure 3.6: Fine-grained recovery: `E₂` crashes and only `E₂` will be restarted
+</div>
+
+<br />
+
+### 3.1.3 Relevance for Agentic Applications
+
+Any real-world application is an intricate web of executions, continuations, and dependencies requiring scalable coordination and recovery to ensure correctness even in the presence of partial order and partial failure—in other words: even in the presence of unfettered chaos.
+
+However, agentic applications amplify the challenges through their spatial and temporal characteristics.
+
+#### Conventional Applications: Fast, Cheap, Short-lived, Coarse-Grained Recovery
+
+In a conventional application, executions conclude in milliseconds or seconds. Executions remotely invoke only a handful of subexecutions over persistent TCP connections. The graph concludes within the lifetime of the originating process and its network connections, so continuations resume on the same location. When a failure occurs somewhere in the graph, the go-to strategy is simple: restart from the failure point. Recovery is total and coarse-grained: restart the affected subgraph and accept the wasted work. That's acceptable because executions are fast and cheap.
+
+#### Agentic Applications: Slow, Expensive, Long-Lived, Fine-Grained Recovery
+
+Agentic executions turn this upside down. In an agentic application such as the Research Agent, executions might run for tens of minutes or hours and cost five+ dollars in LLM tokens. These executions routinely outlive the processes that started them and the TCP connections that connect them: The originating process crashes or the network connection times out. Continuations cannot resume on the same location but must remap to whatever location is available. When a failure occurs somewhere in the graph, the go-to strategy no longer works. If a ten-minute, five-dollar research task fails at minute nine, restarting from the beginning wastes nine minutes and four dollars and fifty cents in already-completed LLM calls. Those tokens are gone. That money is spent. Recovery must be fine-grained and surgical—preserve completed work, isolate failures, restart only what's necessary.
+
+**We don't need a framework for building agents. We need a framework for building distributed applications**
+
+## 3.2 Distributed Async Await
+
+Resonate's [Distributed Async Await](https://www.resonatehq.io) extends the popular async await programming model beyond the boundaries of a single process: Distributed Async Await guarantees coordination and completion across processes and failures.
+
+Listing 3.1 demonstrates an agentic data analysis pipeline using Distributed Async Await. The function generates pipeline parameters with an LLM, remotely invokes an analytics job, and interprets the results, also with an LLM.
+
+```typescript showLineNumbers
+// Analyzes a dataset by generating analysis parameters,
+// running the pipeline on a remote cluster and
+// interpreting the results.
+function* analyze(context, datasetID: string) {
+  // Step 1: Generate parameters for pipeline run
+  // highlight-next-line
+  const params = yield* context.run(generateParams, datasetID);
+  // Step 2: Execute pipeline run (remote cluster)
+  // highlight-next-line
+  const result = yield* context.rpc(executePipeline, params);
+  // Step 3: Interpret result
+  // highlight-next-line
+  const report = yield* context.run(interpretResult, result);
+
+  return report;
+}
+
+// Invoke the execution with id analyze-dataset123
+const report = await resonate.run("analyze-dataset123", analyze, "dataset123");
+```
+
+<div className="listing-description">
+  Listing 3.1: An agentic data analysis pipeline
+</div>
+
+### 3.2.1 Programming Model
+
+Distributed Async Await is a language integrated programming model based on durable functions and durable promises currently available as a Typescript SDK and a Python SDK
+
+#### Durable Functions
+
+A durable function is a function that can suspend and resume across process boundaries and failure boundaries: a durable function execution can span over multiple processes and over arbitrary time periods.
+
+#### Durable Promises
+
+A durable promise has a unique identifier (a URL), persists its state in durable storage, and can be awaited from anywhere. A durable promise is either pending or completed, more specifically, resolved (indicating success) or rejected (indicating failure).
+
+Every invocation of `run` or `rpc` creates a uniquely identified promise-execution pair.
+
+In Listing 3.1, execution begins on the last line with a call to `resonate.run` and a unique identifier. Assuming that datasets are immutable, we use the dataset ID as the execution ID: `analyze-dataset123`.
+
+Inside the function, each `run` and `rpc` invocation deterministically generates a new promise ID based on the parent's promise ID. The promise IDs form a tree that mirrors the execution structure:
+
+```
+analyze-dataset123
+├─ analyze-dataset123.1 (run generateParams)
+├─ analyze-dataset123.2 (rpc executePipeline)
+└─ analyze-dataset123.3 (run interpretResult)
+```
+
+Distributed Async Await automatically checkpoints at promise creation and completion: each `yield*` marks a checkpoint where progress is saved:
+
+- `context.run(fn, ...args)`: Invokes the function on the same location as the caller. Use for classic function calls, when the caller and callee share an address space.
+
+- `context.rpc(fn, ...args)`: Invokes the function on a different location. Use for remote function calls, when the callee needs to run on a different type of machine, needs to scale, or needs to recover independently.
+
+:::info Logical & Physical vs Durable & Ephemeral
+In the previous section, we talked about logical and physical executions. In this section, we talk about durable and ephemeral executions. Why the shift in terminology?
+
+Logical function executions map one-to-one to durable function executions while physical function executions map one-to-one to ephemeral function executions. However, Durable Promises play a dual role. They are part of the logical model (providing identity) but also part of the physical model (providing state).
+
+This duality—promises as both logical coordination primitives and physical storage entities—is what enables distributed execution to maintain logical continuity across physical fragmentation.
+:::
+
+### 3.2.2 Execution Model
+
+Figure 3.6 illustrates the architecture of Distributed Async Await. A deployment consists of a Resonate Server, the orchestrator, and one or more Resonate Workers, the executors:
+
+#### Resonate Server
+
+The Resonate Server acts as the orchestrator, responsible for scheduling and supervision. The server is a stateful component that durably stores Durable Promises. Therefore, the server is the anchor of distributed identity, distributed coordination, and distributed recovery.
+
+#### Resonate Worker
+
+The Resonate Workers act as the executors, responsible for executing application code. A worker is stateless component that executes ephemeral executions that contribute to durable executions. A worker is any component that hosts the Resonate SDK and application code, like a dedicated process, a dedicated container, or a serverless function.
+
+Embedded in each worker, the Resonate SDK mediates between ephemeral computation and durable coordination. The SDK intercepts `run` and `rpc` calls, manages promise lifecycle, and communicates with the Resonate Server.
+
+**computation is ephemeral, coordination is durable**
+
+<br />
+
+![Figure 3.6](/img/chapter3/figure3.6.svg)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  Figure 3.6: The Architecture of Distributed Async Await, illustrating a Resonate Server, storing Durable Promises and two Resonate Workers, running ephemeral computations.
+</div>
+
+#### Execution Flow
+
+When `analyze-dataset123` processes `yield* context.rpc(executePipeline, params)`, here's what happens:
+
+1. **Promise Creation**: The SDK generates a deterministic ID (`analyze-dataset123.2`) based on the parent's ID and invocation's position. The SDK creates a durable promise in the Resonate Server with status pending and the parameters of the invocation (see Listing 3.2).
+
+2. **Suspension**: The Resonate SDK suspends the execution `analyze-dataset123` at the `yield*` point. The Resonate SDK registers a callback with the promise `analyze-dataset123.2`. The Resonate SDK discards the execution's stack frame and local variables.
+
+3. **Execution**: The Resonate Server schedules the execution `analyze-dataset123.2` on an available Resonate Worker. A Resonate Worker picks up the execution. The Resonate SDK on that worker starts executing `analyze-dataset123.2` until completion or until itself suspends.
+
+4. **Completion**: When the execution completes, the Resonate SDK sends the result to the Resonate Server. The Resonate Server updates the promise to completed with the result value persisted (see Listing 3.3).
+
+5. **Resumption**:  The Resonate Server schedules the callback to resume `analyze-dataset123`. A Resonate Worker (possibly different from before) picks up the callback. The Resonate SDK retrieves the result from the Resonate Server and resumes `analyze-dataset123` with the returned value.
+
+```typescript
+Promise {
+  id: "analyze-dataset123.2"
+  status: "pending"
+  params: {
+    func: "executePipeline",
+    args: [{param1: "...", param2: "..."}]
+  }
+}
+```
+
+<div className="listing-description">
+  Listing 3.2: The Durable Promise `analyze-dataset123.2` after creation
+</div>
+
+```typescript
+Promise {
+  id: "analyze-dataset123.2"
+  status: "resolved"
+  params: {
+    func: "executePipeline",
+    args: [{param1: "...", param2: "..."}]
+  }
+  value: "..."
+}
+```
+
+<div className="listing-description">
+  Listing 3.3: The Durable Promise `analyze-dataset123.2` after completion
+</div>
+
+### 3.2.3 Recovery through Replay
+
+Identity and durability enable recovery: when a physical execution crashes, the logical execution can remap to a different physical execution using the associated promise.
+
+ We can retry the call to `resonate.run` many times from anywhere without re-analyzing the dataset. If the execution already exists, Distributed Async Await returns the existing result. If not, a new execution starts.
+
+If `analyze` crashes at any point, Distributed Async Await restarts the execution but skips everything that has already completed based on the durable promises. For example:
+
+- If `generateParams` already completed, we do not regenerate the parameters—we retrieve them from the promise
+- If `executePipeline` is still running, we simply reattach to the existing execution
+- If `interpretResult` hasn't started, we begin execution normally
+
+**Recovery in Detail:**
+
+Let's trace exactly what happens when a crash occurs. Suppose the Resonate Worker executing `analyze` crashes after `generateParams` completes but before the code reaches the line `yield* context.rpc(executePipeline, params)`. The crash happens in application code between two suspension points. At the moment of the crash, the state in the Resonate Server looks like this:
+
+```
+Promises in Resonate Server:
+- analyze-dataset123: pending
+- analyze-dataset123.1: resolved (value: {param1: "...", param2: "..."})
+- analyze-dataset123.2: not yet created
+- analyze-dataset123.3: not yet created
+```
+
+The Resonate Worker process is gone. The stack frame is gone. Local variables are gone. Any code that executed between `generateParams` completing and the crash is lost. But the promise state persists in the Resonate Server.
+
+When a new Resonate Worker picks up the execution, here's what happens step by step:
+
+1. **Restart**: The Resonate Worker starts executing `analyze` from the first line of code.
+
+2. **First yield point**: Execution reaches `yield* context.run(generateParams, datasetID)` and the Resonate SDK assigns the promise ID `analyze-dataset123.1`.
+
+3. **Promise lookup**: The Resonate SDK queries the Resonate Server and finds an existing promise with status completed.
+
+4. **Skip**: Instead of invoking `generateParams`, the Resonate SDK returns the persisted value `{param1: "...", param2: "..."}`.
+
+5. **Continue**: The execution continues with the local variable `params = {param1: "...", param2: "..."}`. Any code between this line and the next `yield*` executes again.
+
+6. **Second yield point**: Execution reaches `yield* context.rpc(executePipeline, params)` and the Resonate SDK generates promise ID `analyze-dataset123.2`.
+
+7. **Promise lookup**: The Resonate SDK queries the Resonate Server, does not find an existing promise, and creates a new promise with status `pending`.
+
+8. **Normal execution**: The execution proceeds as if nothing happened.
+
+`generateParams` operation ran only once, and its result was preserved across the crash. This replay is transparent to your code—it just sees the result of `generateParams` and continues. The crash becomes invisible at the logical level.
+
+:::note Determinism Requirement
+
+Distributed Async Await achieves recovery through deterministic replay: when resuming after a crash, Distributed Async Await re-execute code up to the crash point, using cached promise results instead of re-executing completed invocations. This requires code (between suspension points) to be deterministic. Informally, on restart, we must go down the same path, otherwise the restart is not a replay.
+
+**In practice, achieving determinism is easy**
+:::
+
+:::note Idempotence Requirement
+Resonate guarantees eventual completion via language integrated checkpointing and reliable resumption in case of disruptions: Executions resume where they left off by restarting from the beginning and skipping steps that have already been recorded
+
+However, we must consider a fundamental issue inherent to checkpointing: In the event of a disruption, after performing an operation but before recording its completion, the operation will be performed again.
+
+Therefore, every operation must be idempotent, i.e. the repeated application of an operation does not have any effects beyond the initial application.
+
+**In practice, achieving idempotence is hard**
+:::
+
+Now let's see the distributed systems theory in practice with the Research Agent.
+
+## 3.3 The Research Agent
+
+The Research Agent is a recursive, distributed agentic application. You invoke the research agent with a research topic like "What are the defining characteristics of a distributed system?" The agent breaks the topic into subtopics, recursively invokes itself on each subtopic, and synthesizes the results into an answer (see Listing 3.4).
+
+```
+You are a recursive deep research agent.
+
+When given a topic, either break the topic into 2–3 semantically meaningful
+subtopics and call the "research" tool for each subtopic individually or
+summarize the topic without calling the "research" tool.
+
+Respond with:
+- One summary paragraph of the topic, or
+- One or more tool calls, each with a single subtopic.
+```
+
+<div className="listing-description">
+  Listing 3.4: System prompt for the Research Agent
+</div>
+
+The Research Agent is implemented with Resonate's Distributed Async Await as a single function `research(context, topic, depth)`. The `research` function calls the `prompt` function, which calls the OpenAI API, configured with access to one tool, called `research(topic)`. If the LLM decides a topic needs investigation, the LLM issues `research` tool calls with subtopics. The `research` function then invokes itself once per tool call (`yield* context.beginRpc(research, topic, depth-1)`) and subsequently awaits the results (`yield* handle`). On completion, the answers are synthesized by the LLM, which returns its own answer.
+
+```typescript
+
+// Open AI
+import OpenAI from "openai";
+// Resonate HQ
+import { Resonate, type Context } from "@resonatehq/sdk";
+
+const resonate = new Resonate();
+
+const aiclient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+const TOOLS: OpenAI.Chat.Completions.ChatCompletionTool[] = [{
+  type: "function",
+  function: {
+    name: "research",
+    description: "Research a given topic",
+    parameters: {
+      type: "object",
+      properties: {
+        topic: {
+          type: "string",
+          description: "The topic to research",
+        },
+      },
+      required: ["topic"],
+    },
+  },
+},];
+
+async function prompt(
+  context: Context,
+  messages: any[],
+  hasToolAccess: boolean,
+): Promise<any> {
+  const completion = await aiclient.chat.completions.create({
+    model: "gpt-5",
+    messages: messages,
+    tools: TOOLS,
+    tool_choice: hasToolAccess ? "auto" : "none",
+  });
+  return completion.choices[0]?.message;
+}
+
+function* research(
+  context: Context,
+  topic: string,
+  depth: number,
+): Generator<any, string, any> {
+
+  const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+    { role: "system", content: "The prompt in Listing 3.4" },
+    { role: "user", content: topic },
+  ];
+
+  while (true) {
+    // Prompt the LLM
+    // Only allow tool access if depth > 0
+    const message = yield* context.run(prompt, messages, depth > 0);
+
+    messages.push(message);
+
+    // Handle parallel tool calls by recursively starting the deep research agent
+    // and subsequently awaiting the results
+    if (message.tool_calls) {
+      const handles = [];
+      for (const tool_call of message.tool_calls) {
+        const tool_name = tool_call.function.name;
+        const tool_args = JSON.parse(tool_call.function.arguments);
+        if (tool_name === "research") {
+          const handle = yield* context.beginRpc(
+            "research",
+            tool_args.topic,
+            depth - 1,
+          );
+          handles.push([tool_call, handle]);
+        }
+      }
+      for (const [tool_call, handle] of handles) {
+        const result = yield* handle;
+        messages.push({
+          role: "tool",
+          tool_call_id: tool_call.id,
+          content: result,
+        });
+      }
+    } else {
+      return message.content || "";
+    }
+  }
+}
+
+resonate.register("research", research);
+
+```
+
+<div className="listing-description">
+  Listing 3.5: Implementation of the Research Agent
+</div>
+
+The user can pose a research question by using the Resonate API or the Resonate CLI
+
+```bash
+$ resonate invoke r.1 --func research --arg "What are distributed systems" --arg 2
+```
+
+Later the user can fetch the result
+
+```bash
+$ resonate promises get r.1
+```
+
+The implementation is strikingly simple: `research` appears to be a single, continuously executing function, calling itself recursively. This simple programming model abstracts a complex execution model addressing the challenges of distributed systems.
+
+The Research Agent is a graph (see Figure 3.7): The nodes in the graph represent function executions, the edges describe invoke and await relationships between function executions. An invocation is either a local invocation, a `run` or a remote invocation, an `rpc`. If the invocation is a remote invocation, the invocation partitions the graph into another computation, spawning its own recovery boundary.
+
+<br />
+
+![Figure 3.7](/img/chapter3/figure3.7.mov)
+
+<div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
+  Figure 3.7: The call graph of the Research Agent
+</div>
+
+#### Durable Identity and State
+
+Every function execution has a unique identifier and persists its eventual return value via its associated durable promise. In our example, the top-level Research Agent has the identifier `r.1`. This durable identity and state enable the caller to safely retry the invocation if uncertain whether a previous attempt succeeded and to retrieve the result later.
+
+#### Distributed Coordination
+
+Distributed Async Await enables the developer to write local looking code that executes remotely. `yield* context.rpc(research, topic, depth-1)` looks like a normal function call, but instead, the function call is scheduled on the global event loop. If the LLM issues `research` tool calls, the `research` function spawns concurrent executions:
+
+```typescript
+const handle = yield* context.beginRpc("research", topic, depth - 1);
+```
+
+Similarly, Distributed Async Await enables the developer to await the completion via `yield* handle`. While the execution is suspended, the execution does not exist in memory but is recreated on resumption. This way the execution can resume on this or any other ephemeral process.
+
+#### Distributed Recovery
+
+The `yield*` syntax suspends execution and when awaiting results (`yield* handle`). Each suspension is a point where the physical execution can stop and resume later—potentially on a different machine. The `while (true)` loop isn't blocking; it's a conversation with the LLM that can span minutes or hours across multiple invocations.
+
+From one function and one tool definition, we get a complex multi-agent system that exposes every challenge of distributed agentic applications: identity management (which invocation is which in the tree?), state persistence (the `messages` array must survive process restarts), distributed coordination (parent waits for children across machines), and failure recovery (what happens when a child crashes?).
+
+:::note
+To run the Research Agent yourself, check out these Github repositories:
+- [The Research Agent, on your machine](https://github.com/resonatehq-examples/example-openai-deep-research-agent-ts)
+- [The Research Agent, serverless on GCP](https://github.com/resonatehq-examples/example-openai-deep-research-agent-gcp-ts)
+:::
+
+
+## 3.4 Summary
+
+- When an agent transitions from the terminal to the cloud, the agent transitions from a non-distributed system into a distributed systems.
+
+- Coordination constrains order (partial order) while recovery completes progress under failures (partial failure). Wait to synchronize; restart to supervise.
+
+- One agent, that is, one logical execution fans out to many physical executions, raising questions of identity, oneness, and continuity across space and time
+
+- remote invocations introduces a spatial cut (different location); await introduces a temporal cut (suspension and continuation).
+
+- `run` schedules work on the same location while `rpc` schedules work on a different location.
+
+- `await` suspends the caller, captures a continuation, and resumes when the callee completes, potentially on a different location.
+
+- Computations are graphs. Executions are nodes invoke and await are edges. `rpc` partitions computation.
+
+- Distributed Async Await. Language-integrated run/rpc/await unify local and remote execution with durable progress and automatic reattachment.
+
+- Durable functions & promises. `yield*` marks checkpoints; promise IDs form a deterministic tree; replay skips completed work.
+
+- The Research Agent: A concise, recursive example that exposes identity, coordination, and recovery at scale.

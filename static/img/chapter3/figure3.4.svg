@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xl="http://www.w3.org/1999/xlink" viewBox="-1 -5161 2202 1322" width="2202" height="1322">
+  <defs>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="black">
+      <g>
+        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+  </defs>
+  <g id="Chapter-2" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill-opacity="1" fill="none">
+    <title>Chapter-2</title>
+    <rect fill="white" x="-1" y="-5161" width="2202" height="1322"/>
+    <g id="Chapter-2_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_530">
+        <path d="M 25 -4720 L 415 -4720 C 428.8071 -4720 440 -4708.807 440 -4695 L 440 -4305 C 440 -4291.193 428.8071 -4280 415 -4280 L 25 -4280 C 11.192881 -4280 16908844e-22 -4291.193 0 -4305 L 24868996e-21 -4695 C 2655988e-20 -4708.807 11.192881 -4720 25 -4720 Z" fill="#f8f8ff"/>
+        <path d="M 25 -4720 L 415 -4720 C 428.8071 -4720 440 -4708.807 440 -4695 L 440 -4305 C 440 -4291.193 428.8071 -4280 415 -4280 L 25 -4280 C 11.192881 -4280 16908844e-22 -4291.193 0 -4305 L 24868996e-21 -4695 C 2655988e-20 -4708.807 11.192881 -4720 25 -4720 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8.0,8.0" stroke-width="2"/>
+      </g>
+      <g id="Graphic_529">
+        <path d="M 45 -4560 L 155 -4560 C 157.76142 -4560 160 -4557.7614 160 -4555 L 160 -4445 C 160 -4442.2386 157.76142 -4440 155 -4440 L 45 -4440 C 42.238576 -4440 40 -4442.2386 40 -4445 L 40 -4555 C 40 -4557.7614 42.238576 -4560 45 -4560 Z" fill="white"/>
+        <path d="M 45 -4560 L 155 -4560 C 157.76142 -4560 160 -4557.7614 160 -4555 L 160 -4445 C 160 -4442.2386 157.76142 -4440 155 -4440 L 45 -4440 C 42.238576 -4440 40 -4442.2386 40 -4445 L 40 -4555 C 40 -4557.7614 42.238576 -4560 45 -4560 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"/>
+      </g>
+      <g id="Graphic_528">
+        <path d="M 285 -4680 L 395 -4680 C 397.76142 -4680 400 -4677.7614 400 -4675 L 400 -4565 C 400 -4562.2386 397.76142 -4560 395 -4560 L 285 -4560 C 282.23858 -4560 280 -4562.2386 280 -4565 L 280 -4675 C 280 -4677.7614 282.23858 -4680 285 -4680 Z" fill="white"/>
+        <path d="M 285 -4680 L 395 -4680 C 397.76142 -4680 400 -4677.7614 400 -4675 L 400 -4565 C 400 -4562.2386 397.76142 -4560 395 -4560 L 285 -4560 C 282.23858 -4560 280 -4562.2386 280 -4565 L 280 -4675 C 280 -4677.7614 282.23858 -4680 285 -4680 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Graphic_527">
+        <path d="M 285 -4440 L 395 -4440 C 397.76142 -4440 400 -4437.7614 400 -4435 L 400 -4325 C 400 -4322.2386 397.76142 -4320 395 -4320 L 285 -4320 C 282.23858 -4320 280 -4322.2386 280 -4325 L 280 -4435 C 280 -4437.7614 282.23858 -4440 285 -4440 Z" fill="white"/>
+        <path d="M 285 -4440 L 395 -4440 C 397.76142 -4440 400 -4437.7614 400 -4435 L 400 -4325 C 400 -4322.2386 397.76142 -4320 395 -4320 L 285 -4320 C 282.23858 -4320 280 -4322.2386 280 -4325 L 280 -4435 C 280 -4437.7614 282.23858 -4440 285 -4440 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_526">
+        <path d="M 160 -4530 L 195 -4530 C 208.80712 -4530 220 -4541.193 220 -4555 L 220 -4595 C 220 -4608.807 231.19288 -4620 245 -4620 L 280 -4620" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_525">
+        <path d="M 162 -4470 L 195 -4470 C 208.80712 -4470 220 -4458.807 220 -4445 L 220 -4405 C 220 -4391.193 231.19288 -4380 245 -4380 L 280 -4380" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_551">
+        <path d="M 905 -5160 L 1295 -5160 C 1308.8071 -5160 1320 -5148.807 1320 -5135 L 1320 -4745 C 1320 -4731.193 1308.8071 -4720 1295 -4720 L 905 -4720 C 891.1929 -4720 880 -4731.193 880 -4745 L 880 -5135 C 880 -5148.807 891.1929 -5160 905 -5160 Z" fill="#f8f8ff"/>
+        <path d="M 905 -5160 L 1295 -5160 C 1308.8071 -5160 1320 -5148.807 1320 -5135 L 1320 -4745 C 1320 -4731.193 1308.8071 -4720 1295 -4720 L 905 -4720 C 891.1929 -4720 880 -4731.193 880 -4745 L 880 -5135 C 880 -5148.807 891.1929 -5160 905 -5160 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8.0,8.0" stroke-width="2"/>
+      </g>
+      <g id="Graphic_550">
+        <path d="M 925 -5e3 L 1035 -5e3 C 1037.7614 -5e3 1040 -4997.7614 1040 -4995 L 1040 -4885 C 1040 -4882.2386 1037.7614 -4880 1035 -4880 L 925 -4880 C 922.2386 -4880 920 -4882.2386 920 -4885 L 920 -4995 C 920 -4997.7614 922.2386 -5e3 925 -5e3 Z" fill="white"/>
+        <path d="M 925 -5e3 L 1035 -5e3 C 1037.7614 -5e3 1040 -4997.7614 1040 -4995 L 1040 -4885 C 1040 -4882.2386 1037.7614 -4880 1035 -4880 L 925 -4880 C 922.2386 -4880 920 -4882.2386 920 -4885 L 920 -4995 C 920 -4997.7614 922.2386 -5e3 925 -5e3 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"/>
+      </g>
+      <g id="Graphic_548">
+        <path d="M 1165 -5e3 L 1275 -5e3 C 1277.7614 -5e3 1280 -4997.7614 1280 -4995 L 1280 -4885 C 1280 -4882.2386 1277.7614 -4880 1275 -4880 L 1165 -4880 C 1162.2386 -4880 1160 -4882.2386 1160 -4885 L 1160 -4995 C 1160 -4997.7614 1162.2386 -5e3 1165 -5e3 Z" fill="white"/>
+        <path d="M 1165 -5e3 L 1275 -5e3 C 1277.7614 -5e3 1280 -4997.7614 1280 -4995 L 1280 -4885 C 1280 -4882.2386 1277.7614 -4880 1275 -4880 L 1165 -4880 C 1162.2386 -4880 1160 -4882.2386 1160 -4885 L 1160 -4995 C 1160 -4997.7614 1162.2386 -5e3 1165 -5e3 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_546">
+        <line x1="1042" y1="-4940" x2="1159" y2="-4940" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_558">
+        <path d="M 905 -4280 L 1295 -4280 C 1308.8071 -4280 1320 -4268.807 1320 -4255 L 1320 -3865 C 1320 -3851.193 1308.8071 -3840 1295 -3840 L 905 -3840 C 891.1929 -3840 880 -3851.193 880 -3865 L 880 -4255 C 880 -4268.807 891.1929 -4280 905 -4280 Z" fill="#f8f8ff"/>
+        <path d="M 905 -4280 L 1295 -4280 C 1308.8071 -4280 1320 -4268.807 1320 -4255 L 1320 -3865 C 1320 -3851.193 1308.8071 -3840 1295 -3840 L 905 -3840 C 891.1929 -3840 880 -3851.193 880 -3865 L 880 -4255 C 880 -4268.807 891.1929 -4280 905 -4280 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8.0,8.0" stroke-width="2"/>
+      </g>
+      <g id="Graphic_557">
+        <path d="M 925 -4120 L 1035 -4120 C 1037.7614 -4120 1040 -4117.7614 1040 -4115 L 1040 -4005 C 1040 -4002.2386 1037.7614 -4e3 1035 -4e3 L 925 -4e3 C 922.2386 -4e3 920 -4002.2386 920 -4005 L 920 -4115 C 920 -4117.7614 922.2386 -4120 925 -4120 Z" fill="white"/>
+        <path d="M 925 -4120 L 1035 -4120 C 1037.7614 -4120 1040 -4117.7614 1040 -4115 L 1040 -4005 C 1040 -4002.2386 1037.7614 -4e3 1035 -4e3 L 925 -4e3 C 922.2386 -4e3 920 -4002.2386 920 -4005 L 920 -4115 C 920 -4117.7614 922.2386 -4120 925 -4120 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"/>
+      </g>
+      <g id="Graphic_556">
+        <path d="M 1165 -4120 L 1275 -4120 C 1277.7614 -4120 1280 -4117.7614 1280 -4115 L 1280 -4005 C 1280 -4002.2386 1277.7614 -4e3 1275 -4e3 L 1165 -4e3 C 1162.2386 -4e3 1160 -4002.2386 1160 -4005 L 1160 -4115 C 1160 -4117.7614 1162.2386 -4120 1165 -4120 Z" fill="white"/>
+        <path d="M 1165 -4120 L 1275 -4120 C 1277.7614 -4120 1280 -4117.7614 1280 -4115 L 1280 -4005 C 1280 -4002.2386 1277.7614 -4e3 1275 -4e3 L 1165 -4e3 C 1162.2386 -4e3 1160 -4002.2386 1160 -4005 L 1160 -4115 C 1160 -4117.7614 1162.2386 -4120 1165 -4120 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_554">
+        <line x1="1042" y1="-4060" x2="1159" y2="-4060" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_572">
+        <path d="M 1785 -4280 L 2175 -4280 C 2188.807 -4280 2200 -4268.807 2200 -4255 L 2200 -3865 C 2200 -3851.193 2188.807 -3840 2175 -3840 L 1785 -3840 C 1771.1929 -3840 1760 -3851.193 1760 -3865 L 1760 -4255 C 1760 -4268.807 1771.1929 -4280 1785 -4280 Z" fill="#f8f8ff"/>
+        <path d="M 1785 -4280 L 2175 -4280 C 2188.807 -4280 2200 -4268.807 2200 -4255 L 2200 -3865 C 2200 -3851.193 2188.807 -3840 2175 -3840 L 1785 -3840 C 1771.1929 -3840 1760 -3851.193 1760 -3865 L 1760 -4255 C 1760 -4268.807 1771.1929 -4280 1785 -4280 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8.0,8.0" stroke-width="2"/>
+      </g>
+      <g id="Graphic_571">
+        <path d="M 1805 -4120 L 1915 -4120 C 1917.7614 -4120 1920 -4117.7614 1920 -4115 L 1920 -4005 C 1920 -4002.2386 1917.7614 -4e3 1915 -4e3 L 1805 -4e3 C 1802.2386 -4e3 1800 -4002.2386 1800 -4005 L 1800 -4115 C 1800 -4117.7614 1802.2386 -4120 1805 -4120 Z" fill="white"/>
+        <path d="M 1805 -4120 L 1915 -4120 C 1917.7614 -4120 1920 -4117.7614 1920 -4115 L 1920 -4005 C 1920 -4002.2386 1917.7614 -4e3 1915 -4e3 L 1805 -4e3 C 1802.2386 -4e3 1800 -4002.2386 1800 -4005 L 1800 -4115 C 1800 -4117.7614 1802.2386 -4120 1805 -4120 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"/>
+      </g>
+      <g id="Graphic_570">
+        <path d="M 2045 -4240 L 2155 -4240 C 2157.7614 -4240 2160 -4237.7614 2160 -4235 L 2160 -4125 C 2160 -4122.2386 2157.7614 -4120 2155 -4120 L 2045 -4120 C 2042.2386 -4120 2040 -4122.2386 2040 -4125 L 2040 -4235 C 2040 -4237.7614 2042.2386 -4240 2045 -4240 Z" fill="white"/>
+        <path d="M 2045 -4240 L 2155 -4240 C 2157.7614 -4240 2160 -4237.7614 2160 -4235 L 2160 -4125 C 2160 -4122.2386 2157.7614 -4120 2155 -4120 L 2045 -4120 C 2042.2386 -4120 2040 -4122.2386 2040 -4125 L 2040 -4235 C 2040 -4237.7614 2042.2386 -4240 2045 -4240 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Graphic_569">
+        <path d="M 2045 -4e3 L 2155 -4e3 C 2157.7614 -4e3 2160 -3997.7614 2160 -3995 L 2160 -3885 C 2160 -3882.2386 2157.7614 -3880 2155 -3880 L 2045 -3880 C 2042.2386 -3880 2040 -3882.2386 2040 -3885 L 2040 -3995 C 2040 -3997.7614 2042.2386 -4e3 2045 -4e3 Z" fill="white"/>
+        <path d="M 2045 -4e3 L 2155 -4e3 C 2157.7614 -4e3 2160 -3997.7614 2160 -3995 L 2160 -3885 C 2160 -3882.2386 2157.7614 -3880 2155 -3880 L 2045 -3880 C 2042.2386 -3880 2040 -3882.2386 2040 -3885 L 2040 -3995 C 2040 -3997.7614 2042.2386 -4e3 2045 -4e3 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_568">
+        <path d="M 1922 -4090 L 1955 -4090 C 1968.8071 -4090 1980 -4101.193 1980 -4115 L 1980 -4155 C 1980 -4168.807 1991.1929 -4180 2005 -4180 L 2040 -4180" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_567">
+        <path d="M 1922 -4030 L 1955 -4030 C 1968.8071 -4030 1980 -4018.807 1980 -4005 L 1980 -3965 C 1980 -3951.193 1991.1929 -3940 2005 -3940 L 2040 -3940" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_579">
+        <path d="M 1785 -5160 L 2175 -5160 C 2188.807 -5160 2200 -5148.807 2200 -5135 L 2200 -4745 C 2200 -4731.193 2188.807 -4720 2175 -4720 L 1785 -4720 C 1771.1929 -4720 1760 -4731.193 1760 -4745 L 1760 -5135 C 1760 -5148.807 1771.1929 -5160 1785 -5160 Z" fill="#f8f8ff"/>
+        <path d="M 1785 -5160 L 2175 -5160 C 2188.807 -5160 2200 -5148.807 2200 -5135 L 2200 -4745 C 2200 -4731.193 2188.807 -4720 2175 -4720 L 1785 -4720 C 1771.1929 -4720 1760 -4731.193 1760 -4745 L 1760 -5135 C 1760 -5148.807 1771.1929 -5160 1785 -5160 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8.0,8.0" stroke-width="2"/>
+      </g>
+      <g id="Graphic_578">
+        <path d="M 1805 -5e3 L 1915 -5e3 C 1917.7614 -5e3 1920 -4997.7614 1920 -4995 L 1920 -4885 C 1920 -4882.2386 1917.7614 -4880 1915 -4880 L 1805 -4880 C 1802.2386 -4880 1800 -4882.2386 1800 -4885 L 1800 -4995 C 1800 -4997.7614 1802.2386 -5e3 1805 -5e3 Z" fill="white"/>
+        <path d="M 1805 -5e3 L 1915 -5e3 C 1917.7614 -5e3 1920 -4997.7614 1920 -4995 L 1920 -4885 C 1920 -4882.2386 1917.7614 -4880 1915 -4880 L 1805 -4880 C 1802.2386 -4880 1800 -4882.2386 1800 -4885 L 1800 -4995 C 1800 -4997.7614 1802.2386 -5e3 1805 -5e3 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"/>
+      </g>
+      <g id="Graphic_577">
+        <path d="M 2045 -5120 L 2155 -5120 C 2157.7614 -5120 2160 -5117.7614 2160 -5115 L 2160 -5005 C 2160 -5002.2386 2157.7614 -5e3 2155 -5e3 L 2045 -5e3 C 2042.2386 -5e3 2040 -5002.2386 2040 -5005 L 2040 -5115 C 2040 -5117.7614 2042.2386 -5120 2045 -5120 Z" fill="white"/>
+        <path d="M 2045 -5120 L 2155 -5120 C 2157.7614 -5120 2160 -5117.7614 2160 -5115 L 2160 -5005 C 2160 -5002.2386 2157.7614 -5e3 2155 -5e3 L 2045 -5e3 C 2042.2386 -5e3 2040 -5002.2386 2040 -5005 L 2040 -5115 C 2040 -5117.7614 2042.2386 -5120 2045 -5120 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Graphic_576">
+        <path d="M 2045 -4880 L 2155 -4880 C 2157.7614 -4880 2160 -4877.7614 2160 -4875 L 2160 -4765 C 2160 -4762.2386 2157.7614 -4760 2155 -4760 L 2045 -4760 C 2042.2386 -4760 2040 -4762.2386 2040 -4765 L 2040 -4875 C 2040 -4877.7614 2042.2386 -4880 2045 -4880 Z" fill="white"/>
+        <path d="M 2045 -4880 L 2155 -4880 C 2157.7614 -4880 2160 -4877.7614 2160 -4875 L 2160 -4765 C 2160 -4762.2386 2157.7614 -4760 2155 -4760 L 2045 -4760 C 2042.2386 -4760 2040 -4762.2386 2040 -4765 L 2040 -4875 C 2040 -4877.7614 2042.2386 -4880 2045 -4880 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_575">
+        <path d="M 1922 -4970 L 1955 -4970 C 1968.8071 -4970 1980 -4981.193 1980 -4995 L 1980 -5035 C 1980 -5048.807 1991.1929 -5060 2005 -5060 L 2040 -5060" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_574">
+        <path d="M 1922 -4910 L 1955 -4910 C 1968.8071 -4910 1980 -4898.807 1980 -4885 L 1980 -4845 C 1980 -4831.193 1991.1929 -4820 2005 -4820 L 2040 -4820" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_582">
+        <line x1="1281" y1="-4940" x2="1798" y2="-4940" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_583">
+        <line x1="1281" y1="-4060" x2="1798" y2="-4060" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_584">
+        <path d="M 400 -4620 L 635 -4620 C 648.8071 -4620 660 -4631.193 660 -4645 L 660 -4915 C 660 -4928.807 671.1929 -4940 685 -4940 L 920 -4940" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_585">
+        <path d="M 400 -4380 L 635 -4380 C 648.8071 -4380 660 -4368.807 660 -4355 L 660 -4085 C 660 -4071.193 671.1929 -4060 685 -4060 L 920 -4060" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_586">
+        <text transform="translate(5 -4956.68)" fill="#353f58">
+          <tspan font-family="Helvetica Neue" font-size="60" fill="#353f58" x="40.49" y="57" xml:space="preserve">Computation</tspan>
+        </text>
+      </g>
+      <g id="Graphic_587">
+        <text transform="translate(5 -4115)" fill="#353f58">
+          <tspan font-family="Helvetica Neue" font-size="60" fill="#353f58" x="82.22" y="57" xml:space="preserve">Execution</tspan>
+        </text>
+      </g>
+      <g id="Line_588">
+        <line x1="220" y1="-4880" x2="220" y2="-4730.9" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_589">
+        <line x1="100" y1="-4120" x2="100" y2="-4430.1" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_590">
+        <line x1="340" y1="-4120" x2="340" y2="-4310.1" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_591">
+        <text transform="translate(885 -4564.512)" fill="#353f58">
+          <tspan font-family="Helvetica Neue" font-size="48" fill="#353f58" x="38.984" y="46" xml:space="preserve">Local Invocation</tspan>
+          <tspan font-family="Helvetica Neue" font-size="60" fill="#353f58" x="171.65" y="114.344" xml:space="preserve">run</tspan>
+        </text>
+      </g>
+      <g id="Line_592">
+        <line x1="1100.2089" y1="-4569.512" x2="1101.2924" y2="-4930.1" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_594">
+        <line x1="1100.077" y1="-4430.488" x2="1100.4764" y2="-4069.9" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_596">
+        <text transform="translate(1325 -4564.512)" fill="#353f58">
+          <tspan font-family="Helvetica Neue" font-size="48" fill="#353f58" x="13.184" y="46" xml:space="preserve">Remote Invocation</tspan>
+          <tspan font-family="Helvetica Neue" font-size="60" fill="#353f58" x="171.11" y="114.344" xml:space="preserve">rpc</tspan>
+        </text>
+      </g>
+      <g id="Line_597">
+        <line x1="1540" y1="-4569.512" x2="1540" y2="-4930.1" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_599">
+        <line x1="1540.0351" y1="-4430.488" x2="1540.2172" y2="-4069.9" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+    </g>
+  </g>
+</svg>

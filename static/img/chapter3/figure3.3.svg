@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xl="http://www.w3.org/1999/xlink" viewBox="-1 -1 902 302" width="902" height="302">
+  <defs/>
+  <g id="Chapter-2" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill-opacity="1" fill="none">
+    <title>Chapter-2</title>
+    <rect fill="white" x="-1" y="-1" width="902" height="302"/>
+    <g id="Chapter-2_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_504">
+        <path d="M 10 0 L 890 0 C 895.5228 33817688e-23 900 4.4771525 900 10 L 900 110 C 900 115.52285 895.5228 120 890 120 L 10 120 C 4.4771525 120 67635375e-23 115.52285 0 110 L 53290705e-22 10 C 6005424e-21 4.4771525 4.4771525 -67635375e-23 10 0 Z" fill="white"/>
+        <path d="M 10 0 L 890 0 C 895.5228 33817688e-23 900 4.4771525 900 10 L 900 110 C 900 115.52285 895.5228 120 890 120 L 10 120 C 4.4771525 120 67635375e-23 115.52285 0 110 L 53290705e-22 10 C 6005424e-21 4.4771525 4.4771525 -67635375e-23 10 0 Z" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(5 26.828003)" fill="#353f58">
+          <tspan font-family="Helvetica Neue" font-size="32" fill="#353f58" x="402.92" y="30" xml:space="preserve">Agent</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="#353f58" x="274.736" y="62.895996" xml:space="preserve">Research Agent “What are distributed systems”</tspan>
+        </text>
+      </g>
+      <g id="Graphic_505">
+        <path d="M 10 180 L 90 180 C 95.52285 180 100 184.47715 100 190 L 100 290 C 100 295.52285 95.52285 300 90 300 L 10 300 C 4.4771525 300 67635375e-23 295.52285 0 290 L 53290705e-22 190 C 6005424e-21 184.47715 4.4771525 180 10 180 Z" fill="#353f58"/>
+        <path d="M 10 180 L 90 180 C 95.52285 180 100 184.47715 100 190 L 100 290 C 100 295.52285 95.52285 300 90 300 L 10 300 C 4.4771525 300 67635375e-23 295.52285 0 290 L 53290705e-22 190 C 6005424e-21 184.47715 4.4771525 180 10 180 Z" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(5 230.776)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="white" x="27.208" y="15" xml:space="preserve">#954</tspan>
+        </text>
+      </g>
+      <g id="Graphic_507">
+        <path d="M 210 180 L 290 180 C 295.52285 180 300 184.47715 300 190 L 300 290 C 300 295.52285 295.52285 300 290 300 L 210 300 C 204.47715 300 200 295.52285 200 290 L 200 190 C 200 184.47715 204.47715 180 210 180 Z" fill="#353f58"/>
+        <path d="M 210 180 L 290 180 C 295.52285 180 300 184.47715 300 190 L 300 290 C 300 295.52285 295.52285 300 290 300 L 210 300 C 204.47715 300 200 295.52285 200 290 L 200 190 C 200 184.47715 204.47715 180 210 180 Z" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(205 230.776)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="white" x="27.208" y="15" xml:space="preserve">#163</tspan>
+        </text>
+      </g>
+      <g id="Graphic_509">
+        <path d="M 410 180 L 490 180 C 495.52285 180 500 184.47715 500 190 L 500 290 C 500 295.52285 495.52285 300 490 300 L 410 300 C 404.47715 300 400 295.52285 400 290 L 400 190 C 400 184.47715 404.47715 180 410 180 Z" fill="#353f58"/>
+        <path d="M 410 180 L 490 180 C 495.52285 180 500 184.47715 500 190 L 500 290 C 500 295.52285 495.52285 300 490 300 L 410 300 C 404.47715 300 400 295.52285 400 290 L 400 190 C 400 184.47715 404.47715 180 410 180 Z" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(405 230.776)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="white" x="27.208" y="15" xml:space="preserve">#886</tspan>
+        </text>
+      </g>
+      <g id="Graphic_513">
+        <path d="M 610 180 L 690 180 C 695.52285 180 700 184.47715 700 190 L 700 290 C 700 295.52285 695.52285 300 690 300 L 610 300 C 604.47715 300 600 295.52285 600 290 L 600 190 C 600 184.47715 604.47715 180 610 180 Z" fill="#353f58"/>
+        <path d="M 610 180 L 690 180 C 695.52285 180 700 184.47715 700 190 L 700 290 C 700 295.52285 695.52285 300 690 300 L 610 300 C 604.47715 300 600 295.52285 600 290 L 600 190 C 600 184.47715 604.47715 180 610 180 Z" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(605 230.776)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="white" x="27.208" y="15" xml:space="preserve">#282</tspan>
+        </text>
+      </g>
+      <g id="Graphic_514">
+        <path d="M 810 180 L 890 180 C 895.5228 180 900 184.47715 900 190 L 900 290 C 900 295.52285 895.5228 300 890 300 L 810 300 C 804.4772 300 800 295.52285 800 290 L 800 190 C 800 184.47715 804.4772 180 810 180 Z" fill="#353f58"/>
+        <path d="M 810 180 L 890 180 C 895.5228 180 900 184.47715 900 190 L 900 290 C 900 295.52285 895.5228 300 890 300 L 810 300 C 804.4772 300 800 295.52285 800 290 L 800 190 C 800 184.47715 804.4772 180 810 180 Z" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(805 230.776)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="white" x="27.208" y="15" xml:space="preserve">#163</tspan>
+        </text>
+      </g>
+      <g id="Line_515">
+        <line x1="0" y1="149.5" x2="900" y2="149.5" stroke="#353f58" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="16.0,10.0" stroke-width="2"/>
+      </g>
+    </g>
+  </g>
+</svg>
