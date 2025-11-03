@@ -29,7 +29,9 @@ In this chapter, we will build The Research Agent—a distributed, recursive age
 
 <br />
 
-![Figure 3.1](/img/chapter3/figure3.1.mov)
+<video autoplay muted loop controls style={{ width: "100%", height: "auto" }}>
+  <source src="/img/chapter3/figure3.1.mp4" type="video/mp4" />
+</video>
 
 <div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
   Figure 3.1: The distributed, recursive Research Agent
@@ -139,7 +141,9 @@ Figure 3.4 illustrates a distributed call graph. Boxes denote executions. Nested
 
 <br />
 
-![Figure 3.4](/img/chapter3/figure3.4.mov)
+<video autoplay muted loop controls style={{ width: "100%", height: "auto" }}>
+  <source src="/img/chapter3/figure3.4.mp4" type="video/mp4" />
+</video>
 
 <div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
   Figure 3.4: A distributed call graph showing computations (nested boxes) connected by local invocations (run) and partitioned by remote invocations (rpc)
@@ -161,7 +165,9 @@ Figure 3.5 shows this coarse-grained recovery model. When `E₂` crashes, the sy
 
 <br />
 
-![Figure 3.5](/img/chapter3/figure3.5.mov)
+<video autoplay muted loop controls style={{ width: "100%", height: "auto" }}>
+  <source src="/img/chapter3/figure3.5.mp4" type="video/mp4" />
+</video>
 
 <div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
   Figure 3.5: Coarse-grained recovery: `E₂` crashes and everything downstream of `E₂` will be restarted
@@ -176,7 +182,9 @@ We can do better by introducing recovery boundaries. The key insight: computatio
 Figure 3.6 illustrates the same execution structure but with fine-grained recovery
 <br />
 
-![Figure 3.6](/img/chapter3/figure3.6.mov)
+<video autoplay muted loop controls style={{ width: "100%", height: "auto" }}>
+  <source src="/img/chapter3/figure3.6.mp4" type="video/mp4" />
+</video>
 
 <div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
   Figure 3.6: Fine-grained recovery: `E₂` crashes and only `E₂` will be restarted
@@ -544,7 +552,9 @@ The Research Agent is a graph (see Figure 3.8): The nodes in the graph represent
 
 <br />
 
-![Figure 3.8](/img/chapter3/figure3.8.mov)
+<video autoplay muted loop controls style={{ width: "100%", height: "auto" }}>
+  <source src="/img/chapter3/figure3.8.mp4" type="video/mp4" />
+</video>
 
 <div style={{textAlign: 'center', fontStyle: 'italic', marginTop: '-10px'}}>
   Figure 3.8: The call graph of the Research Agent
