@@ -161,7 +161,7 @@ However, that raises an essential question: When an execution crashes, what gets
 
 **Coarse Grained**
 
-If we follow the familiar model of chained HTTP calls—an HTTP request that calls another HTTP request that calls another HTTP request—then a failure anywhere in the chain forces a restart from the failure point. This approach works for short-lived, cheap executions, but collapses under long-lived, expensive executions.
+If we follow the familiar model of chained HTTP calls—an HTTP request that calls another HTTP request that calls another HTTP request—then a failure anywhere in the chain forces a restart from the failure point. This approach works for short-lived, inexpensive executions, but collapses under long-lived, expensive executions.
 
 Figure 3.5 shows this coarse-grained recovery model. When `E₂` crashes, the system restarts both `E₂` and `E₃` and everything downstream.
 
@@ -202,9 +202,9 @@ Any real-world application is an intricate web of executions, continuations, and
 
 However, agentic applications amplify the challenges through their spatial and temporal characteristics.
 
-#### Conventional Applications: Fast, Cheap, Short-lived, Coarse-Grained Recovery
+#### Conventional Applications: Fast, Inexpensive, Short-lived, Coarse-Grained Recovery
 
-In a conventional application, executions conclude in milliseconds or seconds. Executions remotely invoke only a handful of subexecutions over persistent TCP connections. The graph concludes within the lifetime of the originating process and its network connections, so continuations resume on the same location. When a failure occurs somewhere in the graph, the go-to strategy is simple: restart from the failure point. Recovery is total and coarse-grained: restart the affected subgraph and accept the wasted work. That's acceptable because executions are fast and cheap.
+In a conventional application, executions conclude in milliseconds or seconds. Executions remotely invoke only a handful of subexecutions over persistent TCP connections. The graph concludes within the lifetime of the originating process and its network connections, so continuations resume on the same location. When a failure occurs somewhere in the graph, the go-to strategy is simple: restart from the failure point. Recovery is total and coarse-grained: restart the affected subgraph and accept the wasted work. That's acceptable because executions are fast and inexpensive.
 
 #### Agentic Applications: Slow, Expensive, Long-Lived, Fine-Grained Recovery
 
