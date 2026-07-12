@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://systems-engineering-for-agentic-applications.resonatehq.io/sitemap.xml
